@@ -1,0 +1,467 @@
+.about {
+  padding: 4rem 0;
+  background: var(--bg-primary);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.about-header-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 3rem;
+}
+
+.about-header {
+  display: flex;
+  align-items: center;
+}
+
+.about-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-number {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--accent);
+  margin-right: 1rem;
+}
+
+.section-title {
+  font-size: clamp(26px, 5vw, 32px);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+  margin-left: 1rem;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  margin-bottom: 5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 4rem;
+}
+
+.about-description {
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.about-description p {
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+.about-description p:last-child {
+  margin-bottom: 0;
+}
+
+.highlight {
+  color: var(--accent);
+  font-weight: 500;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.highlight:hover {
+  color: var(--text-primary);
+}
+
+/* Experience Section */
+.experience-section {
+  margin-top: 5rem;
+  padding-top: 5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.experience-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3rem;
+  text-align: center;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.experience-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.experience-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.experience-item::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  border-radius: 2px 0 0 2px;
+}
+
+.experience-item.expanded::before {
+  opacity: 1;
+}
+
+.experience-item.expanded {
+  border-color: var(--accent);
+  box-shadow: 0 10px 30px -15px rgba(37, 99, 235, 0.2);
+}
+
+.experience-item:hover {
+  border-color: var(--accent);
+}
+
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.experience-header:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.experience-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.experience-role {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.experience-company {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.experience-position {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.experience-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.experience-location {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.experience-period {
+  font-size: 0.813rem;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.expand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.experience-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 2rem;
+}
+
+.experience-content.expanded {
+  max-height: 2000px;
+  padding: 0 2rem 2rem 2rem;
+}
+
+.experience-achievements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.experience-achievements li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.938rem;
+}
+
+.experience-achievements li::before {
+  content: '▹';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.about-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-wrapper {
+  position: relative;
+  max-width: 300px;
+  width: 100%;
+}
+
+.image-border {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+  transition: all 0.25s ease;
+}
+
+.image-wrapper:hover .image-border {
+  top: 15px;
+  left: 15px;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+}
+
+.profile-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  filter: grayscale(100%);
+  transition: filter 0.25s ease, transform 0.25s ease;
+}
+
+.image-wrapper:hover .profile-image {
+  filter: grayscale(0%);
+  transform: scale(1.05);
+}
+
+
+@media (max-width: 768px) {
+  .about {
+    padding: 3.5rem 0;
+  }
+
+  .about-header-container {
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-container {
+    padding: 0 1.5rem;
+  }
+
+  .about-content {
+    padding: 0 2rem;
+    gap: 3rem;
+  }
+
+  .section-title::after {
+    display: none;
+  }
+
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .about-image {
+    order: -1;
+  }
+
+  .image-wrapper {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .experience-section {
+    margin-top: 4rem;
+    padding-top: 4rem;
+  }
+
+  .experience-title {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .experience-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .experience-header-right {
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .experience-meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .experience-content.expanded {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .experience-company {
+    font-size: 1rem;
+  }
+
+  .experience-position {
+    font-size: 0.938rem;
+  }
+
+  .experience-achievements li {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about {
+    padding: 3rem 0;
+  }
+
+  .about-header-container {
+    padding: 0 1rem;
+  }
+
+  .about-container {
+    padding: 0 1rem;
+  }
+
+  .about-content {
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .about-description p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .image-wrapper {
+    max-width: 200px;
+  }
+
+  .experience-section {
+    margin-top: 3rem;
+    padding-top: 3rem;
+  }
+
+  .experience-title {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .experience-header {
+    padding: 1.25rem;
+  }
+
+  .experience-content.expanded {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .experience-company {
+    font-size: 0.938rem;
+  }
+
+  .experience-position {
+    font-size: 0.875rem;
+  }
+
+  .experience-location,
+  .experience-period {
+    font-size: 0.75rem;
+  }
+
+  .experience-achievements li {
+    font-size: 0.813rem;
+    line-height: 1.5;
+  }
+}
