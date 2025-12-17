@@ -12,7 +12,8 @@ const ChatWidget: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm here to answer questions about Shreyas. What would you like to know?"
+      // content: "Hi I'm Liri, I'm here to answer questions about Loki. What would you like to know?"
+      content: "Apologies for the inconvenience. I’m currently under maintenance and unavailable to respond at the moment."
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -67,7 +68,7 @@ const ChatWidget: React.FC = () => {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again later.'
+        content: "Sorry, I'm under development and cannot respond right now."
       }]);
     } finally {
       setIsLoading(false);
@@ -85,7 +86,8 @@ const ChatWidget: React.FC = () => {
     setMessages([
       {
         role: 'assistant',
-        content: "Hi! I'm here to answer questions about Shreyas. What would you like to know?"
+        // content: "Hi I'm Liri, I'm here to answer questions about Loki. What would you like to know?"
+        content: "Apologies for the inconvenience. I’m currently under maintenance and unavailable to respond at the moment."
       }
     ]);
   };
@@ -116,11 +118,12 @@ const ChatWidget: React.FC = () => {
           <div className="chat-header">
             <div className="chat-header-info">
               <div className="chat-avatar">
-                <span>SR</span>
+                <span>LR</span>
               </div>
               <div>
-                <h3>Ask About Shreyas</h3>
-                <p className="chat-status">Online</p>
+                <h3>Liri.ai</h3>
+                {/* <p className="chat-status">Online</p> */}
+                <p className="chat-status">Offline</p>
               </div>
             </div>
             <div className="chat-header-actions">
@@ -197,7 +200,7 @@ const ChatWidget: React.FC = () => {
               ref={inputRef}
               type="text"
               className="chat-input"
-              placeholder="Ask me anything about Shreyas..."
+              placeholder="Ask me anything about Loki..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}

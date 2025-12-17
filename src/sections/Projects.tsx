@@ -8,30 +8,32 @@ const Projects: React.FC = () => {
   const projects = [
     {
       id: 1,
-      title: 'Edemenu',
-      description: 'A B2B and B2C digital menu management platform with AI-powered menu generation from PDFs using GPT-5. Built with microservices architecture featuring analytics, multi-authentication, and payment integrations, all containerized with Docker and deployed on AWS.',
-      technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'OpenAI GPT-5', 'Prisma'],
-      githubUrl: 'https://github.com/EdemenuOrg',
-      liveUrl: 'https://edemenu.com/',
-      image: '/Edemenu_preview.png'
+      // title: 'JEWELRYPRO',
+      title: 'JewelryPro',
+      // description: 'JEWELRYPRO is a full-stack CRM (Customer Relationship Management) system created to digitize and streamline jewelry retail workflows for a jewelry business. It focuses on simplifying billing, inventory, and customer management through a single, user-friendly web application.',
+      description: 'JEWELRYPRO is a scalable, full-stack Jewelry Retail CRM platform developed for a jewelry business to modernize and digitize core retail operations. The system centralizes billing, inventory tracking, and customer management into a single, secure web application, enabling efficient store operations, accurate data handling, and role-based access for different staff members.',
+      technologies: ['React', 'Redux', 'MUI', 'Node.js', 'PostgreSQL', 'Prisma', 'Express', 'JWT', 'Cloudinary', 'RBAC'],
+      // githubUrl: '',
+      // liveUrl: '',
+      image: '/Jewellery.png'
     },
     {
       id: 2,
-      title: 'TrojAuth',
-      description: 'A secure login application with React frontend and Spring Boot backend, featuring JWT authentication, OAuth 2.0 (Google & GitHub), and multi-factor authentication with email OTP and TOTP support. Built with microservices architecture and deployed using Docker and Kubernetes.',
-      technologies: ['React', 'Spring Boot', 'Java', 'MySQL', 'JWT', 'OAuth 2.0', 'Docker', 'Kubernetes'],
-      githubUrl: 'https://github.com/Shreyas2877/LogIn/tree/stable-v1.1',
-      liveUrl: 'https://medium.com/@shreyas.raviprakash/building-a-secure-scalable-login-application-with-microservices-oauth-mfa-react-spring-mysql-daa2983ddc3e',
-      images: ['/TrojApp.jpg', '/TrojApp_1.jpg', '/TrojApp2.jpg']
+      title: 'Liri - Ai Assistant',
+      description: 'LIRI is an AI-powered portfolio assistant designed to make your portfolio interactive and conversational. Instead of just displaying static project details, LIRI intelligently engages with users, answering questions about your skills, experience, and projects in real time — like a chatbot tailored for your personal portfolio. It represents a modern, AI-driven approach to personal branding — combining AI + Web Development + Natural Language Understanding.',
+      technologies: ['React', 'Typescript', 'Node.js', 'Express', 'MongoDB', 'Gemini API', 'RAG(Vector DB)',],
+      githubUrl: 'https://github.com/lokeshhh-10/Liri-ai-assistant-client',
+      liveUrl: '',
+      image: '/Liri.png'
     },
     {
       id: 3,
-      title: 'Troj-MCP',
-      description: 'A comprehensive Model Context Protocol (MCP) server providing powerful tools for system integration, file operations, calendar management, and email handling. Built with Python and FastAPI, featuring 95%+ test coverage, comprehensive logging, and secure command execution with input validation. Includes Docker support for easy deployment and supports calendar integration, email management, and system monitoring capabilities.',
-      technologies: ['Python', 'FastAPI', 'MCP', 'Docker', 'Pydantic', 'Ruff', 'MyPy'],
-      githubUrl: 'https://github.com/Shreyas2877/Troj-MCP',
+      title: 'Guest Room Application',
+      description: 'The Guest Room Application is a scalable, full-stack management system engineered to digitize and optimize guest accommodation workflows. It provides a secure, API-driven platform for handling room inventory, guest lifecycle management, and booking operations, built with a modular architecture that emphasizes performance optimization, maintainability, and seamless user experience.',
+      technologies: ['React', 'Redux', 'Tailwind CSS', 'Node.js', 'Express', 'JWT', 'Cloudinary', 'MongoDB', 'MVC'],
+      githubUrl: 'https://github.com/lokeshhh-10/Guest-Room-App',
       liveUrl: '',
-      image: '/TrojMCP.png'
+      images: ['/Guest_1.png', '/Guest_2.png', '/Guest_3.png', '/Guest_4.png', '/Guest_5.png' ]
     }
   ];
 
@@ -137,11 +139,11 @@ const Projects: React.FC = () => {
                               <span className="browser-dot dot-green"></span>
                             </div>
                             <div className="browser-url">
-                              {project.title === 'TrojAuth' 
-                                ? 'login.dev' 
-                                : project.title === 'Troj-MCP' 
-                                ? 'troj-mcp.local' 
-                                : 'edemenu.com'}
+                              {project.title === 'JewelryPro' 
+                                ? 'JewelryPro' 
+                                : project.title === 'Liri - Ai Assistant' 
+                                ? 'Liri Ai Assistant' 
+                                : 'Guest Room App'}
                             </div>
                           </div>
                           <div className="browser-content">

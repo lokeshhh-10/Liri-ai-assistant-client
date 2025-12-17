@@ -3,8 +3,8 @@ import './Footer.css';
 
 const Footer: React.FC = () => {
   const socialLinks = [
-    { name: 'GitHub', url: 'https://github.com/Shreyas2877' },
-    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/shreyas-raviprakash-87b600142/' }
+    { name: 'GitHub', url: 'https://github.com/lokeshhh-10' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/lokeshhh10' }
   ];
 
   return (

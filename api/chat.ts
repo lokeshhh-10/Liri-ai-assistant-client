@@ -114,7 +114,7 @@ export default async function handler(
     }
 
     const data = await response.json();
-    const aiMessage = data.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const aiMessage = data.choices[0]?.message?.content || "Sorry, I'm under development and cannot respond right now.";
 
     return res.status(200).json({ 
       message: aiMessage,

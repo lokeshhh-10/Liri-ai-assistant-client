@@ -7,15 +7,19 @@ const Tech: React.FC = () => {
     { name: 'TypeScript', icon: 'TS' },
     { name: 'React', icon: '⚛' },
     { name: 'Node.js', icon: '⬢' },
+    { name: 'Redux', icon: '⚛' },
+    { name: 'Express', icon: 'Ex' },
     { name: 'Python', icon: 'PY' },
-    { name: 'Java', icon: 'JV' },
+    { name: 'Fast API', icon: 'JV' },
+    { name: 'Prisma', icon: 'PR' },
     { name: 'PostgreSQL', icon: 'PG' },
-    { name: 'Kubernetes', icon: 'K8s' },
-    { name: 'Docker', icon: 'D' },
-    { name: 'AWS', icon: 'AWS' },
-    { name: 'Agentic AI', icon: 'AI' },
-    { name: 'MCP', icon: 'MCP' },
-    { name: 'Git', icon: 'G' }
+    { name: 'MongoDB', icon: 'MG' },
+    { name: 'Git', icon: 'G' },
+    { name: 'Github', icon: 'GH' },
+    { name: 'Postman', icon: 'PM' },
+    { name: 'Figma', icon: 'FG' },
+    { name: 'RAG', icon: 'AI' },
+    { name: 'Gen AI', icon: 'AI' },
   ];
 
   return (
