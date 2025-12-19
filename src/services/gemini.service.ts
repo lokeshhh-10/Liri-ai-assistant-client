@@ -17,5 +17,9 @@ export async function generateGeminiContent(
     contents: prompt,
   });
 
+  if (!response.text) {
+    throw new Error("Empty response from Gemini");
+  }
+
   return response.text;
 }
