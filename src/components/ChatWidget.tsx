@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import './ChatWidget.css';
+import SYSTEM_PROMPT from "../constants/systemPrompt";
+// import { sendGeminiRequest } from "../utils/geminiClient";
+import { sendGeminiRequest } from '../clients/geminiClient';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -12,8 +15,7 @@ const ChatWidget: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      // content: "Hi I'm Liri, I'm here to answer questions about Loki. What would you like to know?"
-      content: "Apologies for the inconvenience. I’m currently under maintenance and unavailable to respond at the moment."
+      content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -41,38 +43,40 @@ const ChatWidget: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Prepare conversation history for API
-      const conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = messages.map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content
-      }));
+  const conversationHistory = messages
+    .map(
+      (msg) =>
+        `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+    )
+    .join("\n");
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage,
-          conversationHistory: conversationHistory
-        })
-      });
+  const promptText = `
+${SYSTEM_PROMPT}
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
+${conversationHistory}
+User: ${userMessage}
+Assistant:
+`;
 
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
-    } catch (error) {
-      console.error('Chat error:', error);
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: "Sorry, I'm under development and cannot respond right now."
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
+  const aiMessage = await sendGeminiRequest(promptText);
+
+  setMessages((prev) => [
+    ...prev,
+    { role: "assistant", content: aiMessage },
+  ]);
+} catch (error) {
+  console.error("Chat error:", error);
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "assistant",
+      content: "Sorry, I encountered an error. Please try again later.",
+    },
+  ]);
+} finally {
+  setIsLoading(false);
+}
+
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -86,8 +90,7 @@ const ChatWidget: React.FC = () => {
     setMessages([
       {
         role: 'assistant',
-        // content: "Hi I'm Liri, I'm here to answer questions about Loki. What would you like to know?"
-        content: "Apologies for the inconvenience. I’m currently under maintenance and unavailable to respond at the moment."
+        content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
       }
     ]);
   };
@@ -118,12 +121,11 @@ const ChatWidget: React.FC = () => {
           <div className="chat-header">
             <div className="chat-header-info">
               <div className="chat-avatar">
-                <span>LR</span>
+                <span>LI</span>
               </div>
               <div>
                 <h3>Liri.ai</h3>
-                {/* <p className="chat-status">Online</p> */}
-                <p className="chat-status">Offline</p>
+                <p className="chat-status">Online</p>
               </div>
             </div>
             <div className="chat-header-actions">
