@@ -4,7 +4,7 @@ import { generateGeminiContent } from "../services/gemini.service";
 
 export async function sendGeminiRequest(prompt: string): Promise<string> {
   let attempts = 0;
-  let lastError: any;
+  // let lastError: any;
 
   while (attempts < MAX_GEMINI_ATTEMPTS) {
     const apiKey = getNextGeminiKey();
@@ -13,7 +13,7 @@ export async function sendGeminiRequest(prompt: string): Promise<string> {
     try {
       return await generateGeminiContent(apiKey, prompt);
     } catch (error: any) {
-      lastError = error;
+      // lastError = error;
 
       console.warn(
         `⚠️ Gemini attempt ${attempts}/${MAX_GEMINI_ATTEMPTS} failed`,
