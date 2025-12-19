@@ -9,6 +9,7 @@ const Tech: React.FC = () => {
     { name: 'Node.js', icon: '⬢' },
     { name: 'Redux', icon: '⚛' },
     { name: 'Express', icon: 'Ex' },
+    { name: 'Tailwind CSS', icon: 'TW' },
     { name: 'Python', icon: 'PY' },
     { name: 'Fast API', icon: 'JV' },
     { name: 'Prisma', icon: 'PR' },

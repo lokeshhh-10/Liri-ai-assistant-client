@@ -309,6 +309,7 @@
 }
 
 .chat-send-btn {
+  margin-top: 0.30rem;
   width: 40px;
   height: 40px;
   border-radius: 8px;
