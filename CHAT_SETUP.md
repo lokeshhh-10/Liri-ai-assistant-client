@@ -36,7 +36,7 @@ VITE_GEMINI_API_KEY1=your-api-key-here
 ## Features
 
 - ✅ Floating chat button (bottom-right corner)
-- ✅ AI-powered responses about Shreyas
+- ✅ AI-powered responses about Lokeshwaran
 - ✅ Conversation history maintained
 - ✅ Typing indicator
 - ✅ Responsive design

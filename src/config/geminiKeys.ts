@@ -10,7 +10,7 @@ const GEMINI_KEYS = [
 ].filter(Boolean) as string[];
 
 if (GEMINI_KEYS.length === 0) {
-  throw new Error("❌ No Gemini API keys found in Vite env variables");
+  throw new Error("No Gemini API keys found in Vite env variables");
 }
 
 let currentKeyIndex = Math.floor(Math.random() * GEMINI_KEYS.length);
