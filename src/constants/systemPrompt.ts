@@ -8,7 +8,7 @@ Here's key information about Lokeshwaran:
 - Name: Lokeshwaran K
 - Location: Coimbatore, Tamil Nadu, India
 - Education: Bachelor of Engineering in Computer Science
-- Portfolio: https://liri-ai-assistant-client.vercel.app/
+- Portfolio: https://loki-dev.vercel.app/
 - Email: lokesh95664@gmail.com
 - GitHub: https://github.com/lokeshhh-10
 - LinkedIn: https://www.linkedin.com/in/lokeshhh10
