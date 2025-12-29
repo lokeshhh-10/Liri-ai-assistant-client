@@ -20,11 +20,6 @@ const Hero: React.FC = () => {
             Lokeshwaran K.
           </h1>
           <h2 className="hero-title">I build things for the web.</h2>
-          {/* <p className="hero-description">
-            I'm a software engineer specializing in building (and occasionally designing)
-            exceptional applications. Currently, I’m focused on building human-centered, 
-            high-quality products with clean and  <span className="highlight-company">efficient code</span>.
-          </p> */}
           <p className="hero-description">
             I’m a software engineer specializing in building high-quality, scalable applications, with a strong
             focus on AI-powered and data-driven solutions. My current work centers on developing human-centered
