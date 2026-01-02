@@ -2,25 +2,32 @@ import React from 'react';
 import './Tech.css';
 
 const Tech: React.FC = () => {
+
   const technologies = [
-    { name: 'JavaScript', icon: 'JS' },
-    { name: 'TypeScript', icon: 'TS' },
-    { name: 'React', icon: '⚛' },
-    { name: 'Node.js', icon: '⬢' },
-    { name: 'Redux', icon: '⚛' },
-    { name: 'Express', icon: 'Ex' },
-    { name: 'Tailwind CSS', icon: 'TW' },
-    { name: 'Python', icon: 'PY' },
-    { name: 'Fast API', icon: 'JV' },
-    { name: 'Prisma', icon: 'PR' },
-    { name: 'PostgreSQL', icon: 'PG' },
-    { name: 'MongoDB', icon: 'MG' },
-    { name: 'Git', icon: 'G' },
-    { name: 'Github', icon: 'GH' },
-    { name: 'Postman', icon: 'PM' },
-    { name: 'Figma', icon: 'FG' },
-    { name: 'RAG', icon: 'AI' },
-    { name: 'Gen AI', icon: 'AI' },
+    { name: "JavaScript", icon: "devicon-javascript-plain" },
+    { name: "TypeScript", icon: "devicon-typescript-plain" },
+    { name: "React", icon: "devicon-react-original" },
+    { name: "Node.js", icon: "devicon-nodejs-plain" },
+    { name: "Redux", icon: "devicon-redux-original" },
+    { name: "Express", icon: "devicon-express-original" },
+    { name: "Chart.js", icon: "devicon-chartjs-plain" },
+    { name: "Bootstrap", icon: "devicon-bootstrap-plain" },
+    { name: "Socket.io", icon: "devicon-socketio-plain" },
+    { name: "Material UI", icon: "devicon-materialui-plain"},
+    { name: "Tailwind CSS", icon: "devicon-tailwindcss-plain" },
+    { name: "Python", icon: "devicon-python-plain" },
+    { name: "FastAPI", icon: "devicon-fastapi-plain" },
+    { name: "Prisma", icon: "devicon-prisma-original" },
+    { name: "PostgreSQL", icon: "devicon-postgresql-plain" },
+    { name: "MongoDB", icon: "devicon-mongodb-plain" },
+    { name: "Git", icon: "devicon-git-plain" },
+    { name: "GitHub", icon: "devicon-github-original" },
+    { name: "Postman", icon: "devicon-postman-plain" },
+    { name: "Figma", icon: "devicon-figma-plain" },
+    { name: "Axios", icon: "devicon-axios-plain" },
+    // { name: "RAG", icon: "devicon-graphql-plain" },
+    { name: "Gen AI", icon: "devicon-graphql-plain" },
+
   ];
 
   return (
@@ -34,7 +41,8 @@ const Tech: React.FC = () => {
         <div className="tech-list">
           {technologies.map((tech, index) => (
             <div key={index} className="tech-item">
-              <span className="tech-icon">{tech.icon}</span>
+              {/* <span className="tech-icon">{tech.icon}</span> */}
+               <i className={tech.icon + " tech-icon"} />
               <span className="tech-name">{tech.name}</span>
             </div>
           ))}
