@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 4rem;
+  margin-right: 4rem;
 }
 
 .section-number {
@@ -134,9 +135,7 @@
     padding: 0 1.5rem;
   }
 
-  .tech-header {
-    margin-bottom: 3rem;
-  }
+  
 
   .section-title::after {
     display: none;
@@ -169,10 +168,6 @@
 
   .tech-container {
     padding: 0 1rem;
-  }
-
-  .tech-header {
-    margin-bottom: 2.5rem;
   }
 
   .tech-list {

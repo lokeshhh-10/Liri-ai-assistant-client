@@ -8,6 +8,15 @@ const Projects: React.FC = () => {
   const projects = [
     {
       id: 1,
+      title: 'LiveSurvey',
+      description: 'LiveSurvey is a full-stack real-time survey platform built to handle dynamic form creation and live analytics streaming. It implements an event-driven communication model using Socket.io to process and push survey responses instantly to connected clients. The application integrates Chart.js for real-time data visualization, enabling interactive dashboards that update as responses are submitted. The architecture emphasizes real-time synchronization, efficient state management, and scalable client-server communication.',
+      technologies: ['React', 'Node.js', 'Express', 'MongoDB','Socket.io', 'JWT', 'Chart.js', 'Tailwind CSS'],
+      githubUrl: 'https://github.com/lokeshhh-10/LiveSurvey',
+      liveUrl: 'https://live-survey-rho.vercel.app/',
+      images: ['/Live_1.png', '/Live_2.png', '/Live_3.png', '/Live_4.png']
+    },
+    {
+      id: 2,
       // title: 'JEWELRYPRO',
       title: 'JewelryPro',
       // description: 'JEWELRYPRO is a full-stack CRM (Customer Relationship Management) system created to digitize and streamline jewelry retail workflows for a jewelry business. It focuses on simplifying billing, inventory, and customer management through a single, user-friendly web application.',
@@ -18,7 +27,7 @@ const Projects: React.FC = () => {
       image: '/Jewellery.png'
     },
     {
-      id: 2,
+      id: 3,
       title: 'Liri - Ai Assistant',
       description: 'LIRI is an AI-powered portfolio assistant designed to make your portfolio interactive and conversational. Instead of just displaying static project details, LIRI intelligently engages with users, answering questions about your skills, experience, and projects in real time — like a chatbot tailored for your personal portfolio. It represents a modern, AI-driven approach to personal branding — combining AI + Web Development + Natural Language Understanding.',
       technologies: ['React', 'Typescript', 'Node.js', 'Express', 'MongoDB', 'Gemini API', 'RAG(Vector DB)',],
@@ -27,7 +36,7 @@ const Projects: React.FC = () => {
       image: '/Liri.png'
     },
     {
-      id: 3,
+      id: 4,
       title: 'Guest Room Application',
       description: 'The Guest Room Application is a scalable, full-stack management system engineered to digitize and optimize guest accommodation workflows. It provides a secure, API-driven platform for handling room inventory, guest lifecycle management, and booking operations, built with a modular architecture that emphasizes performance optimization, maintainability, and seamless user experience.',
       technologies: ['React', 'Redux', 'Tailwind CSS', 'Node.js', 'Express', 'JWT', 'Cloudinary', 'MongoDB', 'MVC'],

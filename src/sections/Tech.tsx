@@ -1,8 +1,7 @@
-import React from 'react';
-import './Tech.css';
+import React from "react";
+import "./Tech.css";
 
 const Tech: React.FC = () => {
-
   const technologies = [
     { name: "JavaScript", icon: "devicon-javascript-plain" },
     { name: "TypeScript", icon: "devicon-typescript-plain" },
@@ -13,7 +12,7 @@ const Tech: React.FC = () => {
     { name: "Chart.js", icon: "devicon-chartjs-plain" },
     { name: "Bootstrap", icon: "devicon-bootstrap-plain" },
     { name: "Socket.io", icon: "devicon-socketio-plain" },
-    { name: "Material UI", icon: "devicon-materialui-plain"},
+    { name: "Material UI", icon: "devicon-materialui-plain" },
     { name: "Tailwind CSS", icon: "devicon-tailwindcss-plain" },
     { name: "Python", icon: "devicon-python-plain" },
     { name: "FastAPI", icon: "devicon-fastapi-plain" },
@@ -27,7 +26,6 @@ const Tech: React.FC = () => {
     { name: "Axios", icon: "devicon-axios-plain" },
     // { name: "RAG", icon: "devicon-graphql-plain" },
     { name: "Gen AI", icon: "devicon-graphql-plain" },
-
   ];
 
   return (
@@ -37,12 +35,14 @@ const Tech: React.FC = () => {
           <h2 className="section-number">04.</h2>
           <h3 className="section-title">Technologies I Work With</h3>
         </div>
-        
+
         <div className="tech-list">
           {technologies.map((tech, index) => (
             <div key={index} className="tech-item">
               {/* <span className="tech-icon">{tech.icon}</span> */}
-               <i className={tech.icon + " tech-icon"} />
+              <i
+                className={`${tech.icon} ${["GitHub", "Socket.io"].includes(tech.name) ? "tech-icon-white" : "colored"} tech-icon`}
+              />
               <span className="tech-name">{tech.name}</span>
             </div>
           ))}

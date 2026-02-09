@@ -7,7 +7,7 @@ const About: React.FC = () => {
   const workExperience = [
     {
       company: 'I Bacus Tech labs',
-      role: 'Jr.Full stack Developer',
+      role: 'Jr.Full Stack Developer',
       location: 'Coimbatore, Tamil Nadu',
       period: 'Sep 2025 - Present',
       achievements: [
