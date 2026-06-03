@@ -10,7 +10,7 @@ const Projects: React.FC = () => {
       id: 1,
       title: 'LiveSurvey',
       description: 'LiveSurvey is a full-stack real-time survey platform built to handle dynamic form creation and live analytics streaming. It implements an event-driven communication model using Socket.io to process and push survey responses instantly to connected clients. The application integrates Chart.js for real-time data visualization, enabling interactive dashboards that update as responses are submitted. The architecture emphasizes real-time synchronization, efficient state management, and scalable client-server communication.',
-      technologies: ['React', 'Node.js', 'Express', 'MongoDB','Socket.io', 'JWT', 'Chart.js', 'Tailwind CSS'],
+      technologies: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.io', 'JWT', 'Chart.js', 'Tailwind CSS'],
       githubUrl: 'https://github.com/lokeshhh-10/LiveSurvey',
       liveUrl: 'https://live-survey-rho.vercel.app/',
       images: ['/Live_1.png', '/Live_2.png', '/Live_3.png', '/Live_4.png']
@@ -20,17 +20,17 @@ const Projects: React.FC = () => {
       // title: 'JEWELRYPRO',
       title: 'JewelryPro',
       // description: 'JEWELRYPRO is a full-stack CRM (Customer Relationship Management) system created to digitize and streamline jewelry retail workflows for a jewelry business. It focuses on simplifying billing, inventory, and customer management through a single, user-friendly web application.',
-      description: 'JEWELRYPRO is a scalable, full-stack Jewelry Retail CRM platform developed for a jewelry business to modernize and digitize core retail operations. The system centralizes billing, inventory tracking, and customer management into a single, secure web application, enabling efficient store operations, accurate data handling, and role-based access for different staff members.',
+      description: 'JEWELRYPRO is a scalable, full-stack Jewelry ERP platform developed for a jewelry business to modernize and digitize core retail operations. The system centralizes billing, inventory tracking, and customer management into a single, secure web application, enabling efficient store operations, accurate data handling, and role-based access for different staff members.',
       technologies: ['React', 'Redux', 'MUI', 'Node.js', 'PostgreSQL', 'Prisma', 'Express', 'JWT', 'Cloudinary', 'RBAC'],
       // githubUrl: '',
       // liveUrl: '',
-      image: '/Jewellery.png'
+      images: ['/Jewellery_1.png', '/Jewellery_2.png', '/Jewellery_3.png', '/Jewellery_4.png', '/Jewellery_5.png', '/Jewellery_6.png', '/Jewellery_7.png', '/Jewellery_8.png', '/Jewellery_9.png', '/Jewellery_10.png']
     },
     {
       id: 3,
       title: 'Liri - Ai Assistant',
       description: 'LIRI is an AI-powered portfolio assistant designed to make your portfolio interactive and conversational. Instead of just displaying static project details, LIRI intelligently engages with users, answering questions about your skills, experience, and projects in real time — like a chatbot tailored for your personal portfolio. It represents a modern, AI-driven approach to personal branding — combining AI + Web Development + Natural Language Understanding.',
-      technologies: ['React', 'Typescript', 'Node.js', 'Express', 'MongoDB', 'Gemini API', 'RAG(Vector DB)',],
+      technologies: ['React', 'Typescript', 'Node.js', 'Express', 'MongoDB', 'Gemini API',],
       githubUrl: 'https://github.com/lokeshhh-10/Liri-ai-assistant-client',
       liveUrl: '',
       image: '/Liri.png'
@@ -42,7 +42,7 @@ const Projects: React.FC = () => {
       technologies: ['React', 'Redux', 'Tailwind CSS', 'Node.js', 'Express', 'JWT', 'Cloudinary', 'MongoDB', 'MVC'],
       githubUrl: 'https://github.com/lokeshhh-10/Guest-Room-App',
       liveUrl: '',
-      images: ['/Guest_1.png', '/Guest_2.png', '/Guest_3.png', '/Guest_4.png', '/Guest_5.png' ]
+      images: ['/Guest_1.png', '/Guest_2.png', '/Guest_3.png', '/Guest_4.png', '/Guest_5.png']
     }
   ];
 
@@ -52,7 +52,7 @@ const Projects: React.FC = () => {
 
     const currentIndex = currentImageIndex[projectId] || 0;
     const totalImages = project.images.length;
-    
+
     if (direction === 'next') {
       setCurrentImageIndex({
         ...currentImageIndex,
@@ -74,21 +74,21 @@ const Projects: React.FC = () => {
           <h3 className="section-title">Some Things I've Built</h3>
         </div>
       </div>
-      
+
       <div className="projects-list">
         {projects.map((project) => {
           const currentIndex = project.images ? (currentImageIndex[project.id] || 0) : 0;
           const displayImage = project.image || (project.images ? project.images[currentIndex] : null);
-          
+
           return (
             <div key={project.id} className="project-item">
               <div className="project-content">
                 <div className="project-label">Featured Project</div>
                 <h4 className="project-title">
                   {project.liveUrl ? (
-                    <a 
-                      href={project.liveUrl} 
-                      target="_blank" 
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="project-title-link"
                     >
@@ -148,20 +148,20 @@ const Projects: React.FC = () => {
                               <span className="browser-dot dot-green"></span>
                             </div>
                             <div className="browser-url">
-                              {project.title === 'JewelryPro' 
-                                ? 'JewelryPro' 
-                                : project.title === 'Liri - Ai Assistant' 
-                                ? 'Liri Ai Assistant' 
-                                : 'Guest Room App'}
+                              {project.title === 'JewelryPro'
+                                ? 'JewelryPro'
+                                : project.title === 'Liri - Ai Assistant'
+                                  ? 'Liri Ai Assistant'
+                                  : 'Guest Room App'}
                             </div>
                           </div>
                           <div className="browser-content">
                             {project.images && project.images.length > 1 ? (
                               <>
                                 <div className="image-carousel">
-                                  <img 
-                                    src={displayImage} 
-                                    alt={`${project.title} - Screenshot ${currentIndex + 1}`} 
+                                  <img
+                                    src={displayImage}
+                                    alt={`${project.title} - Screenshot ${currentIndex + 1}`}
                                     className="project-screenshot"
                                     onError={() => {
                                       setImageErrors({
@@ -176,7 +176,7 @@ const Projects: React.FC = () => {
                                       });
                                     }}
                                   />
-                                  <button 
+                                  <button
                                     className="carousel-btn carousel-prev"
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -185,10 +185,10 @@ const Projects: React.FC = () => {
                                     aria-label="Previous image"
                                   >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M10 12l-4-4 4-4"/>
+                                      <path d="M10 12l-4-4 4-4" />
                                     </svg>
                                   </button>
-                                  <button 
+                                  <button
                                     className="carousel-btn carousel-next"
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -197,7 +197,7 @@ const Projects: React.FC = () => {
                                     aria-label="Next image"
                                   >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M6 12l4-4-4-4"/>
+                                      <path d="M6 12l4-4-4-4" />
                                     </svg>
                                   </button>
                                 </div>
