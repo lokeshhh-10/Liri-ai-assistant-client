@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Projects.css';
 
 const Projects: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState<{ [key: number]: number }>({});
   const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
+  const [activeLightboxProject, setActiveLightboxProject] = useState<number | null>(null);
+  const [activeLightboxImageIndex, setActiveLightboxImageIndex] = useState<number>(0);
+
+  const getProjectImages = (projectId: number): string[] => {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return [];
+    return project.images || (project.image ? [project.image] : []);
+  };
 
   const projects = [
     {
@@ -65,6 +73,37 @@ const Projects: React.FC = () => {
       });
     }
   };
+
+  const handleLightboxImageChange = (direction: 'prev' | 'next') => {
+    if (activeLightboxProject === null) return;
+    const images = getProjectImages(activeLightboxProject);
+    if (images.length <= 1) return;
+
+    if (direction === 'next') {
+      setActiveLightboxImageIndex((prev) => (prev + 1) % images.length);
+    } else {
+      setActiveLightboxImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    }
+  };
+
+  useEffect(() => {
+    if (activeLightboxProject === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleLightboxImageChange('next');
+      } else if (e.key === 'ArrowLeft') {
+        handleLightboxImageChange('prev');
+      } else if (e.key === 'Escape') {
+        setActiveLightboxProject(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeLightboxProject, activeLightboxImageIndex]);
 
   return (
     <section id="projects" className="projects">
@@ -162,7 +201,11 @@ const Projects: React.FC = () => {
                                   <img
                                     src={displayImage}
                                     alt={`${project.title} - Screenshot ${currentIndex + 1}`}
-                                    className="project-screenshot"
+                                    className="project-screenshot clickable-image"
+                                    onClick={() => {
+                                      setActiveLightboxProject(project.id);
+                                      setActiveLightboxImageIndex(currentIndex);
+                                    }}
                                     onError={() => {
                                       setImageErrors({
                                         ...imageErrors,
@@ -219,7 +262,17 @@ const Projects: React.FC = () => {
                                 </div>
                               </>
                             ) : (
-                              <img src={displayImage} alt={project.title} className="project-screenshot" />
+                              <img
+                                src={displayImage}
+                                alt={project.title}
+                                className="project-screenshot clickable-image"
+                                onClick={() => {
+                                  if (displayImage) {
+                                    setActiveLightboxProject(project.id);
+                                    setActiveLightboxImageIndex(0);
+                                  }
+                                }}
+                              />
                             )}
                           </div>
                         </div>
@@ -237,6 +290,77 @@ const Projects: React.FC = () => {
           );
         })}
       </div>
+
+      {activeLightboxProject !== null && (() => {
+        const project = projects.find(p => p.id === activeLightboxProject);
+        if (!project) return null;
+        const images = getProjectImages(activeLightboxProject);
+        const currentImg = images[activeLightboxImageIndex];
+
+        return (
+          <div
+            className="lightbox-overlay"
+            onClick={() => setActiveLightboxProject(null)}
+          >
+            <button
+              className="lightbox-close"
+              onClick={() => setActiveLightboxProject(null)}
+              aria-label="Close lightbox"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+
+            {images.length > 1 && (
+              <button
+                className="lightbox-btn lightbox-prev"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLightboxImageChange('prev');
+                }}
+                aria-label="Previous image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+            )}
+
+            <div className="lightbox-image-container" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={currentImg}
+                alt={`${project.title} - Zoomed View`}
+                className="lightbox-img"
+              />
+              <div className="lightbox-footer">
+                <span className="lightbox-title">{project.title}</span>
+                {images.length > 1 && (
+                  <span className="lightbox-counter">
+                    {activeLightboxImageIndex + 1} / {images.length}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {images.length > 1 && (
+              <button
+                className="lightbox-btn lightbox-next"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLightboxImageChange('next');
+                }}
+                aria-label="Next image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            )}
+          </div>
+        );
+      })()}
     </section>
   );
 };
