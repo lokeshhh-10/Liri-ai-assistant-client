@@ -445,6 +445,18 @@
   border-color: var(--accent);
 }
 
+.admin-action-btn.view {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+  text-decoration: none;
+}
+
+.admin-action-btn.view:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #10b981;
+}
+
 .admin-action-btn.delete {
   background: rgba(239, 68, 68, 0.08);
   color: #ef4444;

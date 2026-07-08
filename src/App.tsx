@@ -12,6 +12,7 @@ import ChatWidget from './components/ChatWidget';
 import Login from './pages/Login/Login';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import BlogEditor from './pages/Admin/BlogEditor';
+import BlogDetails from './pages/Blog/BlogDetails';
 import { useState } from 'react';
 import type { Blog } from './services/blogService';
 
@@ -78,6 +79,7 @@ function AdminApp() {
 
 // ---- Root App ----
 const isAdminRoute = window.location.pathname.startsWith('/admin');
+const isBlogRoute = window.location.pathname.startsWith('/blog/');
 
 function App() {
   if (isAdminRoute) {
@@ -86,6 +88,22 @@ function App() {
         <AuthProvider>
           <AdminApp />
         </AuthProvider>
+      </ThemeProvider>
+    );
+  }
+
+  if (isBlogRoute) {
+    const slug = window.location.pathname.split('/blog/')[1];
+    return (
+      <ThemeProvider>
+        <div className="App">
+          <Header />
+          <main>
+            <BlogDetails slug={slug} />
+          </main>
+          <Footer />
+          <ChatWidget />
+        </div>
       </ThemeProvider>
     );
   }

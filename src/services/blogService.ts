@@ -37,6 +37,9 @@ export const getAllBlogs = (): Promise<{ blogs: Blog[] }> =>
 export const getBlogById = (id: string): Promise<{ blog: Blog }> =>
   apiRequest(`/blogs/${id}`);
 
+export const getBlogBySlug = (slug: string): Promise<{ blog: Blog }> =>
+  apiRequest(`/blogs/slug/${slug}`);
+
 export const createBlog = (data: BlogFormData): Promise<{ blog: Blog }> =>
   apiRequest('/blogs', { method: 'POST', body: JSON.stringify(data) });
 
