@@ -4,11 +4,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "source": "/admin/:path*",
+      "destination": "/index.html"
     },
     {
-      "source": "/([^.]*)",
+      "source": "/blog/:path*",
       "destination": "/index.html"
     }
   ]
