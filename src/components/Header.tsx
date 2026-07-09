@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './Header.css';
 import { useTheme } from '../contexts/ThemeContext';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  minimal?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ minimal = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -17,6 +21,10 @@ const Header: React.FC = () => {
   }, []);
 
   const scrollToSection = (sectionId: string) => {
+    if (window.location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -40,10 +48,11 @@ const Header: React.FC = () => {
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <nav className="nav">
         <div className="nav-brand">
-          <a href="#hero" className="brand-link">lokeshhh-10</a>
+          <a href="/#hero" className="brand-link">lokeshhh-10</a>
         </div>
         
-        <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        {!minimal && (
+          <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           {navItems.map((item) => (
             <li key={item.id}>
               {item.href ? (
@@ -63,8 +72,20 @@ const Header: React.FC = () => {
             </li>
           ))}
         </ul>
+        )}
 
         <div className="header-actions">
+          {minimal && window.location.pathname !== '/blogs' && (
+            <a href="/blogs" style={{ 
+              fontFamily: "'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace", 
+              fontSize: "0.813rem", 
+              color: "var(--accent)", 
+              textDecoration: "none",
+              marginRight: "1rem" 
+            }}>
+              All Posts →
+            </a>
+          )}
           <button 
             className="theme-toggle"
             onClick={toggleTheme}
@@ -90,17 +111,19 @@ const Header: React.FC = () => {
             )}
           </button>
 
-          <button 
-            className="mobile-menu-toggle"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-          >
-            <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </button>
+          {!minimal && (
+            <button 
+              className="mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle mobile menu"
+            >
+              <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
+          )}
         </div>
       </nav>
     </header>
