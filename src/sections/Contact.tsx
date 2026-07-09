@@ -49,7 +49,7 @@ const Contact: React.FC = () => {
     <section id="contact" className="contact">
       <div className="container">
         <div className="contact-content">
-          <div className="section-number">03.</div>
+          <div className="section-number">05.</div>
           <h2 className="contact-title">Get In Touch</h2>
           <p className="contact-description">
             I'm always open to connecting! Whether you want to chat about tech, discuss potential contributions or collaborations on projects, explore opportunities, or anything else tech-related—feel free to reach out. My inbox is always open, and I'll do my best to get back to you!
