@@ -106,6 +106,20 @@
   transition: transform 0.3s ease;
 }
 
+.minimal-all-posts {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.813rem;
+  color: var(--accent);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.25s ease;
+}
+
+.minimal-all-posts:hover {
+  opacity: 0.8;
+}
+
 .mobile-menu-toggle {
   display: none;
   background: none;

@@ -76,13 +76,7 @@ const Header: React.FC<HeaderProps> = ({ minimal = false }) => {
 
         <div className="header-actions">
           {minimal && window.location.pathname !== '/blogs' && (
-            <a href="/blogs" style={{ 
-              fontFamily: "'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace", 
-              fontSize: "0.813rem", 
-              color: "var(--accent)", 
-              textDecoration: "none",
-              marginRight: "1rem" 
-            }}>
+            <a href="/blogs" className="minimal-all-posts">
               All Posts →
             </a>
           )}
