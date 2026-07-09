@@ -99,6 +99,7 @@ function App() {
     return (
       <ThemeProvider>
         <div className="App">
+          <Header minimal={true} />
           <BlogList />
         </div>
       </ThemeProvider>
@@ -110,7 +111,7 @@ function App() {
     return (
       <ThemeProvider>
         <div className="App">
-          <Header />
+          <Header minimal={true} />
           <main>
             <BlogDetails slug={slug} />
           </main>

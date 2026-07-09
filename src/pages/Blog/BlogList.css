@@ -12,12 +12,8 @@
 .blog-list-header {
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-primary);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(10, 25, 47, 0.85);
 }
 
 .blog-list-header-inner {

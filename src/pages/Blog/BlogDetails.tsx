@@ -113,6 +113,16 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ slug }) => {
           ))}
         </div>
       )}
+
+      <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
+        <a href="/blogs" className="blog-details-more-btn">
+          Read more posts
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.5rem' }}>
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </div>
     </article>
   );
 };
