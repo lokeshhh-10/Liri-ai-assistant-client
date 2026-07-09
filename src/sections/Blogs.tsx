@@ -36,11 +36,15 @@ const Blogs: React.FC = () => {
     <section id="blogs" className="blogs-section">
       <div className="blogs-header-container">
         <div className="blogs-header">
-          <h2 className="section-number">04.</h2>
+          <h2 className="section-number">05.</h2>
           <h3 className="blogs-section-title">Latest Writing</h3>
         </div>
-        <a href="#blogs" className="blogs-view-more" style={{ visibility: 'hidden' }}>
+        <a href="/blogs" className="blogs-view-more">
           View all
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
         </a>
       </div>
 
@@ -98,6 +102,19 @@ const Blogs: React.FC = () => {
               </div>
             </a>
           ))}
+        </div>
+      )}
+
+      {/* View More Posts button */}
+      {!isLoading && !error && blogs.length > 0 && (
+        <div className="blogs-view-more-wrap">
+          <a href="/blogs" className="blogs-view-more-btn">
+            View More Posts
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
         </div>
       )}
     </section>

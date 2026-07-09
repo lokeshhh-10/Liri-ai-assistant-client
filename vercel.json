@@ -12,6 +12,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/blogs",
+      "destination": "/index.html"
+    },
+    {
       "source": "/blog/:path*",
       "destination": "/index.html"
     }
