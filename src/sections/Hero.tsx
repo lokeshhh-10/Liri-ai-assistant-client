@@ -19,7 +19,8 @@ const Hero: React.FC = () => {
           <h1 className="hero-name">
             Lokeshwaran K.
           </h1>
-          <h2 className="hero-title">I build things for the web.</h2>
+          {/* <h2 className="hero-title">I build things for the web.</h2> */}
+          <h2 className="hero-title">I build software that thinks.</h2>
           <p className="hero-description">
             I’m a software engineer specializing in building high-quality, scalable applications, with a strong
             focus on AI-powered and data-driven solutions. My current work centers on developing human-centered
