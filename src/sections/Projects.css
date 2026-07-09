@@ -534,6 +534,49 @@
   border: 1px solid rgba(100, 255, 218, 0.2);
 }
 
+/* Show More / Show Less Button */
+.projects-show-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0 2rem;
+}
+
+.projects-show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  min-height: unset;
+  min-width: unset;
+}
+
+.projects-show-more-btn:hover {
+  background: rgba(100, 255, 218, 0.07);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px -6px rgba(100, 255, 218, 0.25);
+}
+
+.projects-show-more-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.projects-show-more-btn:hover svg {
+  transform: translateY(3px);
+}
+
+.projects-show-more-btn[aria-expanded="true"]:hover svg {
+  transform: translateY(-3px);
+}
+
 /* Animations */
 @keyframes lightboxFadeIn {
   from {

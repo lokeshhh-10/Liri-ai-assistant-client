@@ -13,39 +13,59 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ slug }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchBlog = async () => {
       try {
         setLoading(true);
         const data = await getBlogBySlug(slug);
-        setBlog(data.blog);
-        document.title = `${data.blog.title} - Lokeshwaran K`;
+        if (!cancelled) {
+          setBlog(data.blog);
+          document.title = `${data.blog.title} - Lokeshwaran K`;
+        }
       } catch (err: any) {
-        setError(err.message || 'Failed to load blog post.');
+        if (!cancelled) setError(err.message || 'Failed to load blog post.');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchBlog();
+    return () => { cancelled = true; };
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="blog-details-loading">
-        <div className="blog-details-spinner"></div>
-      </div>
-    );
-  }
-
-  if (error || !blog) {
+  if (error) {
     return (
       <div className="blog-details-error">
         <h2>Post Not Found</h2>
-        <p>{error || 'The blog post you are looking for does not exist.'}</p>
+        <p>{error}</p>
         <a href="/" className="blog-back-link">← Back to Portfolio</a>
       </div>
     );
   }
+
+  // Show content skeleton while loading — gives the user immediate visual feedback
+  // and prevents the page from feeling blank during the API call.
+  if (loading) {
+    return (
+      <div className="blog-details-container blog-details-skeleton" aria-busy="true" aria-label="Loading blog post">
+        <div className="skeleton-line skeleton-back" />
+        <div className="skeleton-line skeleton-category" />
+        <div className="skeleton-line skeleton-h1" />
+        <div className="skeleton-line skeleton-h1 skeleton-h1-short" />
+        <div className="skeleton-line skeleton-author" />
+        <div className="skeleton-cover" />
+        <div className="skeleton-line skeleton-body" />
+        <div className="skeleton-line skeleton-body" />
+        <div className="skeleton-line skeleton-body skeleton-body-short" />
+        <div className="skeleton-line skeleton-body" />
+        <div className="skeleton-line skeleton-body" />
+        <div className="skeleton-line skeleton-body skeleton-body-shorter" />
+      </div>
+    );
+  }
+
+  if (!blog) return null;
 
   return (
     <article className="blog-details-container">
@@ -65,15 +85,27 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ slug }) => {
 
       {blog.coverImage && (
         <div className="blog-cover-wrapper">
-          <img src={blog.coverImage} alt={blog.title} className="blog-cover-image" />
+          {/*
+           * fetchpriority="high" tells the browser to treat this image as
+           * the highest-priority resource — equivalent to a preload link.
+           * This is the LCP element, so this directly reduces LCP time.
+           */}
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="blog-cover-image"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       )}
 
-      <div 
+      <div
         className="blog-content"
         dangerouslySetInnerHTML={{ __html: blog.content }}
       />
-      
+
       {blog.tags && blog.tags.length > 0 && (
         <div className="blog-tags">
           {blog.tags.map(tag => (

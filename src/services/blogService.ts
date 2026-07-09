@@ -11,6 +11,7 @@ export interface Blog {
   tags: string[];
   author: string;
   isPublished: boolean;
+  isPinned: boolean;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -51,6 +52,12 @@ export const deleteBlog = (id: string): Promise<{ message: string }> =>
 
 export const togglePublish = (id: string): Promise<{ blog: Blog }> =>
   apiRequest(`/blogs/${id}/publish`, { method: 'PATCH' });
+
+export const togglePin = (id: string): Promise<{ blog: Blog }> =>
+  apiRequest(`/blogs/${id}/pin`, { method: 'PATCH' });
+
+export const getPinnedBlogs = (): Promise<{ blogs: Blog[] }> =>
+  apiRequest('/blogs/pinned');
 
 export const uploadImage = (base64Image: string): Promise<{ url: string }> =>
   apiRequest('/upload/image', { method: 'POST', body: JSON.stringify({ image: base64Image }) });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './AdminDashboard.css';
 import { useAuth } from '../../contexts/AuthContext';
-import { getAllBlogs, deleteBlog, togglePublish } from '../../services/blogService';
+import { getAllBlogs, deleteBlog, togglePublish, togglePin } from '../../services/blogService';
 import type { Blog } from '../../services/blogService';
 
 interface AdminDashboardProps {
@@ -17,6 +17,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNewPost, onEditPost }
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [pinningId, setPinningId] = useState<string | null>(null);
 
   const fetchBlogs = useCallback(async () => {
     setIsLoading(true);
@@ -55,6 +56,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNewPost, onEditPost }
       alert(err.message || 'Failed to update status.');
     } finally {
       setTogglingId(null);
+    }
+  };
+
+  const handleTogglePin = async (blog: Blog) => {
+    setPinningId(blog._id);
+    try {
+      const updated = await togglePin(blog._id);
+      setBlogs(prev => prev.map(b => b._id === blog._id ? updated.blog : b));
+    } catch (err: any) {
+      alert(err.message || 'Failed to update pin status.');
+    } finally {
+      setPinningId(null);
     }
   };
 
@@ -204,6 +217,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNewPost, onEditPost }
                     <th>Title</th>
                     <th>Category</th>
                     <th>Status</th>
+                    <th>Pinned</th>
                     <th>Published</th>
                     <th>Updated</th>
                     <th>Actions</th>
@@ -234,6 +248,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNewPost, onEditPost }
                             <span className="admin-status-dot" />
                           )}
                           {blog.isPublished ? 'Published' : 'Draft'}
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className={`admin-status-badge ${blog.isPinned ? 'pinned' : 'unpinned'}`}
+                          onClick={() => handleTogglePin(blog)}
+                          disabled={pinningId === blog._id}
+                          title={blog.isPinned ? 'Click to unpin from homepage' : 'Click to pin to homepage (max 3)'}
+                        >
+                          {pinningId === blog._id ? (
+                            <span className="admin-mini-spinner" />
+                          ) : (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill={blog.isPinned ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                          )}
+                          {blog.isPinned ? 'Pinned' : 'Pin'}
                         </button>
                       </td>
                       <td className="admin-td-date">{formatDate(blog.publishedAt)}</td>
