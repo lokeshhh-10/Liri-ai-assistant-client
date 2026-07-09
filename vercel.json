@@ -17,7 +17,7 @@
     },
     {
       "source": "/blog/:path*",
-      "destination": "/index.html"
+      "destination": "/api/seo"
     }
   ]
 }
