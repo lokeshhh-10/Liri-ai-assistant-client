@@ -6,6 +6,9 @@ const Projects: React.FC = () => {
   const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
   const [activeLightboxProject, setActiveLightboxProject] = useState<number | null>(null);
   const [activeLightboxImageIndex, setActiveLightboxImageIndex] = useState<number>(0);
+  const [showAll, setShowAll] = useState(false);
+
+  const INITIAL_COUNT = 3;
 
   const getProjectImages = (projectId: number): string[] => {
     const project = projects.find(p => p.id === projectId);
@@ -115,7 +118,7 @@ const Projects: React.FC = () => {
       </div>
 
       <div className="projects-list">
-        {projects.map((project) => {
+        {(showAll ? projects : projects.slice(0, INITIAL_COUNT)).map((project) => {
           const currentIndex = project.images ? (currentImageIndex[project.id] || 0) : 0;
           const displayImage = project.image || (project.images ? project.images[currentIndex] : null);
 
@@ -290,6 +293,32 @@ const Projects: React.FC = () => {
           );
         })}
       </div>
+
+      {projects.length > INITIAL_COUNT && (
+        <div className="projects-show-more">
+          <button
+            className="projects-show-more-btn"
+            onClick={() => setShowAll(prev => !prev)}
+            aria-expanded={showAll}
+          >
+            {showAll ? (
+              <>
+                Show Less
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
+              </>
+            ) : (
+              <>
+                Show More ({projects.length - INITIAL_COUNT} more)
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {activeLightboxProject !== null && (() => {
         const project = projects.find(p => p.id === activeLightboxProject);

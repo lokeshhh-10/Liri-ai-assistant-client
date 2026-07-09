@@ -9,6 +9,7 @@ import Contact from './sections/Contact';
 import Tech from './sections/Tech';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
+import Blogs from './sections/Blogs';
 import Login from './pages/Login/Login';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import BlogEditor from './pages/Admin/BlogEditor';
@@ -118,6 +119,7 @@ function App() {
           <Projects />
           <Contact />
           <Tech />
+          <Blogs />
         </main>
         <Footer />
         <ChatWidget />

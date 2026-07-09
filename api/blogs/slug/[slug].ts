@@ -17,6 +17,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     if (req.method === 'GET') {
       const blog = await blogs.findOne({ slug: slugStr, isPublished: true });
       if (!blog) return error(res, 404, 'Blog not found');
+
+      // Cache at the CDN edge for 5 minutes; browser caches for 30s.
+      // stale-while-revalidate: serve stale content instantly while revalidating in background.
+      // This eliminates cold-start cost for all repeat visits within the cache window.
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=300, max-age=30, stale-while-revalidate=600'
+      );
+
       return ok(res, { blog });
     }
 
