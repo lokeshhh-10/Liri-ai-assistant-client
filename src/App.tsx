@@ -129,9 +129,9 @@ function App() {
           <Hero />
           <About />
           <Projects />
-          <Contact />
           <Tech />
           <Blogs />
+          <Contact />
         </main>
         <Footer />
         <ChatWidget />

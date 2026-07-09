@@ -29,10 +29,11 @@ const Header: React.FC = () => {
   };
 
   const navItems = [
-    { id: 'about', label: 'About', number: '01' },
-    { id: 'projects', label: 'Projects', number: '02' },
-    { id: 'contact', label: 'Contact', number: '03' },
-    { id: 'tech', label: 'Tech', number: '04' }
+    { id: 'about',    label: 'About',    number: '01', href: null },
+    { id: 'projects', label: 'Projects', number: '02', href: null },
+    { id: 'tech',     label: 'Tech',     number: '03', href: null },
+    { id: 'blogs',    label: 'Blog',     number: '04', href: '/blogs' },
+    { id: 'contact',  label: 'Contact',  number: '05', href: null },
   ];
 
   return (
@@ -45,13 +46,20 @@ const Header: React.FC = () => {
         <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           {navItems.map((item) => (
             <li key={item.id}>
-              <button 
-                onClick={() => scrollToSection(item.id)} 
-                className="nav-link"
-              >
-                <span className="nav-number">{item.number}.</span>
-                {item.label}
-              </button>
+              {item.href ? (
+                <a href={item.href} className="nav-link">
+                  <span className="nav-number">{item.number}.</span>
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  onClick={() => scrollToSection(item.id)}
+                  className="nav-link"
+                >
+                  <span className="nav-number">{item.number}.</span>
+                  {item.label}
+                </button>
+              )}
             </li>
           ))}
         </ul>

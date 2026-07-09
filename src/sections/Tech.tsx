@@ -32,7 +32,7 @@ const Tech: React.FC = () => {
     <section id="tech" className="tech">
       <div className="tech-container">
         <div className="tech-header">
-          <h2 className="section-number">04.</h2>
+          <h2 className="section-number">03.</h2>
           <h3 className="section-title">Technologies I Work With</h3>
         </div>
 

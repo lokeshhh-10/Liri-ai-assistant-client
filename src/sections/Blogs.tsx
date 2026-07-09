@@ -36,7 +36,7 @@ const Blogs: React.FC = () => {
     <section id="blogs" className="blogs-section">
       <div className="blogs-header-container">
         <div className="blogs-header">
-          <h2 className="section-number">05.</h2>
+          <h2 className="section-number">04.</h2>
           <h3 className="blogs-section-title">Latest Writing</h3>
         </div>
         <a href="/blogs" className="blogs-view-more">
