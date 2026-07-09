@@ -32,7 +32,7 @@ const Header: React.FC = () => {
     { id: 'about',    label: 'About',    number: '01', href: null },
     { id: 'projects', label: 'Projects', number: '02', href: null },
     { id: 'tech',     label: 'Tech',     number: '03', href: null },
-    { id: 'blogs',    label: 'Blog',     number: '04', href: '/blogs' },
+    { id: 'blogs',    label: 'Blog',     number: '04', href: null },
     { id: 'contact',  label: 'Contact',  number: '05', href: null },
   ];
 
