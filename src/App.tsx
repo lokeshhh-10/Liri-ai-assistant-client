@@ -14,6 +14,7 @@ import Login from './pages/Login/Login';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import BlogEditor from './pages/Admin/BlogEditor';
 import BlogDetails from './pages/Blog/BlogDetails';
+import BlogList from './pages/Blog/BlogList';
 import { useState } from 'react';
 import type { Blog } from './services/blogService';
 
@@ -81,6 +82,7 @@ function AdminApp() {
 // ---- Root App ----
 const isAdminRoute = window.location.pathname.startsWith('/admin');
 const isBlogRoute = window.location.pathname.startsWith('/blog/');
+const isBlogsListRoute = window.location.pathname === '/blogs';
 
 function App() {
   if (isAdminRoute) {
@@ -89,6 +91,16 @@ function App() {
         <AuthProvider>
           <AdminApp />
         </AuthProvider>
+      </ThemeProvider>
+    );
+  }
+
+  if (isBlogsListRoute) {
+    return (
+      <ThemeProvider>
+        <div className="App">
+          <BlogList />
+        </div>
       </ThemeProvider>
     );
   }

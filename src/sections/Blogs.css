@@ -31,6 +31,52 @@
   white-space: nowrap;
 }
 
+/* "View all" link in header */
+.blogs-view-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.813rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: gap 0.2s ease, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.blogs-view-more:hover {
+  gap: 0.65rem;
+  opacity: 0.8;
+}
+
+/* "View More Posts" button below grid */
+.blogs-view-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.blogs-view-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, gap 0.2s;
+}
+
+.blogs-view-more-btn:hover {
+  background: rgba(100, 255, 218, 0.07);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px -6px rgba(100, 255, 218, 0.2);
+  gap: 0.75rem;
+}
+
 /* ---- Grid ---- */
 .blogs-grid {
   max-width: 1000px;
