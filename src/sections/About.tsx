@@ -70,7 +70,7 @@ const About: React.FC = () => {
           <div className="image-wrapper">
             <div className="image-border"></div>
             <div className="image-container">
-              <img src="/Profile.jpeg" alt="Lokeshwaran K" className="profile-image" />
+              <img src="/me.jpeg" alt="Lokeshwaran K" className="profile-image" />
             </div>
           </div>
         </div>
