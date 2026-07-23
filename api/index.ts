@@ -100,15 +100,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { image, folder = 'blog-covers' } = (req.body as { image?: string; folder?: string }) || {};
         if (!image || typeof image !== 'string') return error(res, 400, 'Missing or invalid image data');
 
-        const uploadData = image.startsWith('data:') ? image : `data:image/jpeg;base64,${image}`;
+        const isGif = image.startsWith('data:image/gif') || (!image.startsWith('data:') && image.startsWith('R0lGOD'));
+        const isWebp = image.startsWith('data:image/webp') || (!image.startsWith('data:') && image.startsWith('UklGR'));
+
+        const uploadData = image.startsWith('data:')
+          ? image
+          : isGif
+            ? `data:image/gif;base64,${image}`
+            : isWebp
+              ? `data:image/webp;base64,${image}`
+              : `data:image/jpeg;base64,${image}`;
+
+        const transformation = (isGif || isWebp)
+          ? [{ width: 1200, crop: 'limit', flags: 'animated' }]
+          : [
+              { width: 1200, crop: 'limit' },
+              { quality: 'auto:good' },
+              { fetch_format: 'auto' },
+            ];
+
         const result = await cloudinary.uploader.upload(uploadData, {
           folder,
           resource_type: 'image',
-          transformation: [
-            { width: 1200, crop: 'limit' },
-            { quality: 'auto:good' },
-            { fetch_format: 'auto' },
-          ],
+          transformation,
         });
 
         return ok(res, {
