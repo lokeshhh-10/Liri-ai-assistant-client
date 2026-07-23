@@ -8,16 +8,12 @@
       "destination": "/api/index"
     },
     {
-      "source": "/admin/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/blogs",
-      "destination": "/index.html"
-    },
-    {
       "source": "/blog/:path*",
       "destination": "/api/seo"
+    },
+    {
+      "source": "/:path((?!api|@|src|node_modules|assets|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ]
 }
