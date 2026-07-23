@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import inboxZeroDark from '../../assets/inbox-zero-dark.svg';
 import './NotFound.css';
 
 const DEV_EXCUSES = [
@@ -136,6 +137,9 @@ const NotFound: React.FC = () => {
       >
         {/* Main 404 Hero */}
         <div className="nf-header">
+          <div className="nf-illustration-wrapper">
+            <img src={inboxZeroDark} alt="GitHub Octocat Inbox Zero" className="nf-illustration-img" />
+          </div>
           <div className="nf-code-tag">&lt;Error 404 /&gt;</div>
           <h1 className="nf-title">404</h1>
           <h2 className="nf-subtitle">This is not the page you are looking for</h2>

@@ -151,6 +151,57 @@
   margin-bottom: 2rem;
 }
 
+/* GitHub Octocat Hero Illustration */
+.nf-illustration-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  width: 100%;
+  max-width: 380px;
+}
+
+.nf-illustration-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 140px;
+  background: radial-gradient(ellipse at center, rgba(31, 111, 235, 0.3) 0%, rgba(37, 99, 235, 0.08) 55%, transparent 75%);
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.nf-illustration-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: heroFloat 5s ease-in-out infinite alternate;
+}
+
+.nf-illustration-wrapper:hover .nf-illustration-img {
+  transform: scale(1.06) translateY(-6px);
+}
+
+@keyframes heroFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-8px);
+  }
+}
+
+
 .nf-code-tag {
   display: inline-block;
   font-family: 'SF Mono', Monaco, Consolas, monospace;
