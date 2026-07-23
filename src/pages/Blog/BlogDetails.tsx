@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './BlogDetails.css';
 import { getBlogBySlug } from '../../services/blogService';
 import type { Blog } from '../../services/blogService';
+import NotFound from '../NotFound/NotFound';
 
 interface BlogDetailsProps {
   slug: string;
@@ -35,13 +36,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ slug }) => {
   }, [slug]);
 
   if (error) {
-    return (
-      <div className="blog-details-error">
-        <h2>Post Not Found</h2>
-        <p>{error}</p>
-        <a href="/" className="blog-back-link">← Back to Portfolio</a>
-      </div>
-    );
+    return <NotFound />;
   }
 
   // Show content skeleton while loading — gives the user immediate visual feedback

@@ -15,6 +15,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import BlogEditor from './pages/Admin/BlogEditor';
 import BlogDetails from './pages/Blog/BlogDetails';
 import BlogList from './pages/Blog/BlogList';
+import NotFound from './pages/NotFound/NotFound';
 import { useState } from 'react';
 import type { Blog } from './services/blogService';
 
@@ -122,21 +123,33 @@ function App() {
     );
   }
 
+  const currentPath = window.location.pathname;
+  const isHomeRoute = currentPath === '/' || currentPath === '';
+
+  if (isHomeRoute) {
+    return (
+      <ThemeProvider>
+        <div className="App">
+          <Header />
+          <main>
+            <Hero />
+            <About />
+            <Projects />
+            <Tech />
+            <Blogs />
+            <Contact />
+          </main>
+          <Footer />
+          <ChatWidget />
+        </div>
+      </ThemeProvider>
+    );
+  }
+
+  // Any unrecognized route gets the GitHub-styled 404 page
   return (
     <ThemeProvider>
-      <div className="App">
-        <Header />
-        <main>
-          <Hero />
-          <About />
-          <Projects />
-          <Tech />
-          <Blogs />
-          <Contact />
-        </main>
-        <Footer />
-        <ChatWidget />
-      </div>
+      <NotFound />
     </ThemeProvider>
   );
 }

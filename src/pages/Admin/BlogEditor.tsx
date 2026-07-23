@@ -105,7 +105,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ blog, onSuccess, onCancel }) =>
 
     // Validate file type and size (max 5MB)
     if (!file.type.startsWith('image/')) {
-      setSaveError('Please select a valid image file.');
+      setSaveError('Please select a valid image file (PNG, JPG, WebP, GIF).');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -525,13 +525,13 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ blog, onSuccess, onCancel }) =>
                   <polyline points="21 15 16 10 5 21"/>
                 </svg>
                 <p>Click to upload cover image</p>
-                <span>PNG, JPG, WebP • Max 5MB</span>
+                <span>PNG, JPG, WebP, GIF • Max 5MB</span>
               </div>
             )}
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/png, image/jpeg, image/webp, image/gif, image/*, .gif, .webp"
               onChange={handleImageFileChange}
               style={{ display: 'none' }}
             />
