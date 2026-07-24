@@ -28,11 +28,71 @@ const ChatWidget: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleOpenChat = (event: Event) => {
+      const customEvent = event as CustomEvent<{ prompt?: string }>;
+      setIsOpen(true);
+      if (customEvent.detail?.prompt) {
+        const query = customEvent.detail.prompt;
+        setInputValue(query);
+        // Automatically trigger message send
+        setTimeout(() => {
+          triggerQuery(query);
+        }, 100);
+      }
+    };
+
+    window.addEventListener('open-liri-chat', handleOpenChat);
+    return () => {
+      window.removeEventListener('open-liri-chat', handleOpenChat);
+    };
+  }, [messages, isLoading]);
+
+  useEffect(() => {
     if (isOpen) {
       scrollToBottom();
       inputRef.current?.focus();
     }
   }, [messages, isOpen]);
+
+  const triggerQuery = async (queryText: string) => {
+    if (!queryText.trim() || isLoading) return;
+    const userMessage = queryText.trim();
+    setInputValue('');
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setIsLoading(true);
+
+    try {
+      const conversationHistory = messages
+        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+        .join("\n");
+
+      const promptText = `
+${SYSTEM_PROMPT}
+
+${conversationHistory}
+User: ${userMessage}
+Assistant:
+`;
+
+      const aiMessage = await sendGeminiRequest(promptText);
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: aiMessage },
+      ]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Sorry, I encountered an error. Please try again later.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -185,6 +245,25 @@ Assistant:
                 </div>
               </div>
             ))}
+            {messages.length === 1 && !isLoading && (
+              <div className="chat-quick-chips">
+                <p className="chips-title">Suggested questions:</p>
+                <div className="chips-grid">
+                  <button className="chip-btn" onClick={() => triggerQuery("What technologies does Loki use most?")}>
+                    💡 What tech stack does Loki use?
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("Tell me about JewelryPro ERP and its architecture.")}>
+                    🚀 Tell me about JewelryPro
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("How does LiveSurvey achieve real-time updates?")}>
+                    ⚡ How does LiveSurvey work?
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("Summarize Loki's experience and background.")}>
+                    📄 Summarize Loki's background
+                  </button>
+                </div>
+              </div>
+            )}
             {isLoading && (
               <div className="chat-message assistant-message">
                 <div className="message-content typing-indicator">
