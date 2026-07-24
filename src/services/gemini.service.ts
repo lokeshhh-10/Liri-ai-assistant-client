@@ -1,52 +1,58 @@
 // src/services/gemini.service.ts
-import { GoogleGenAI } from "@google/genai";
 
 export async function generateGeminiContent(
-  apiKey: string | undefined,
-  prompt: string,
+  _apiKey?: string | undefined,
+  prompt?: string,
   model = "gemini-2.5-flash"
 ): Promise<string> {
-  if (!apiKey) {
-    throw new Error("Gemini API key is missing");
+  // Support overload if called as generateGeminiContent(prompt, model)
+  const actualPrompt = typeof _apiKey === "string" && prompt === undefined ? _apiKey : prompt;
+  if (!actualPrompt) {
+    throw new Error("Prompt is required");
   }
 
-  const ai = new GoogleGenAI({ apiKey });
-
-  const response = await ai.models.generateContent({
-    model,
-    contents: prompt,
-  });
-
-  if (!response.text) {
-    throw new Error("Empty response from Gemini");
-  }
-
-  return response.text;
-}
-
-export async function streamGeminiContent(
-  apiKey: string | undefined,
-  prompt: string,
-  onChunk: (chunkText: string) => void,
-  model = "gemini-2.5-flash"
-): Promise<string> {
-  if (!apiKey) {
-    throw new Error("Gemini API key is missing");
-  }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
-
-  const response = await fetch(url, {
+  const response = await fetch("/api/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }],
-        },
-      ],
+      prompt: actualPrompt,
+      stream: false,
+      model,
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Gemini API error ${response.status}: ${errText}`);
+  }
+
+  const data = await response.json();
+  if (!data?.text) {
+    throw new Error("Empty response from Gemini");
+  }
+
+  return data.text;
+}
+
+export async function streamGeminiContent(
+  _apiKey: string | undefined,
+  prompt: string,
+  onChunk: (chunkText: string) => void,
+  model = "gemini-2.5-flash"
+): Promise<string> {
+  const actualPrompt = typeof _apiKey === "string" && typeof prompt !== "string" ? _apiKey : prompt;
+
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: actualPrompt,
+      stream: true,
+      model,
     }),
   });
 
@@ -88,26 +94,34 @@ export async function streamGeminiContent(
         } catch {
           // Ignore incomplete JSON line
         }
+      } else if (trimmed && !trimmed.startsWith("data:")) {
+        // Handle direct text chunk stream
+        fullText += line;
+        onChunk(line);
       }
     }
   }
 
-  if (buffer.trim().startsWith("data: ")) {
-    try {
-      const jsonStr = buffer.trim().slice(6);
-      const parsed = JSON.parse(jsonStr);
-      const chunkText =
-        parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (chunkText) {
-        fullText += chunkText;
-        onChunk(chunkText);
+  if (buffer.trim()) {
+    const trimmed = buffer.trim();
+    if (trimmed.startsWith("data: ")) {
+      try {
+        const jsonStr = trimmed.slice(6);
+        const parsed = JSON.parse(jsonStr);
+        const chunkText =
+          parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (chunkText) {
+          fullText += chunkText;
+          onChunk(chunkText);
+        }
+      } catch {
+        // Ignore incomplete JSON line
       }
-    } catch {
-      // Ignore incomplete JSON line
+    } else {
+      fullText += buffer;
+      onChunk(buffer);
     }
   }
 
   return fullText;
 }
-
-

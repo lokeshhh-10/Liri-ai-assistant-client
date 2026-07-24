@@ -42,6 +42,8 @@ function segments(req: VercelRequest): string[] {
 
 // ─── Main handler ────────────────────────────────────────────────────────────
 
+let serverKeyIndex = 0;
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   // Allow CORS for the portfolio frontend in development
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -55,6 +57,127 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const method = req.method ?? 'GET';
 
   try {
+    // ── Chat / Gemini route ──────────────────────────────────────────────────
+
+    if (resource === 'chat' && method === 'POST') {
+      const { prompt, stream = false, model = 'gemini-2.5-flash' } =
+        (req.body as { prompt?: string; stream?: boolean; model?: string }) || {};
+
+      if (!prompt || typeof prompt !== 'string') {
+        return error(res, 400, 'Missing or invalid prompt');
+      }
+
+      // Collect server-side keys
+      const keys = [
+        process.env.GEMINI_API_KEY1,
+        process.env.GEMINI_API_KEY2,
+        process.env.GEMINI_API_KEY3,
+        process.env.GEMINI_API_KEY4,
+        process.env.GEMINI_API_KEY5,
+        process.env.GEMINI_API_KEY6,
+        process.env.VITE_GEMINI_API_KEY1,
+        process.env.VITE_GEMINI_API_KEY2,
+        process.env.VITE_GEMINI_API_KEY3,
+        process.env.VITE_GEMINI_API_KEY4,
+        process.env.VITE_GEMINI_API_KEY5,
+        process.env.VITE_GEMINI_API_KEY6,
+      ].filter(Boolean) as string[];
+
+      const uniqueKeys = Array.from(new Set(keys));
+
+      if (uniqueKeys.length === 0) {
+        return error(res, 500, 'No Gemini API keys configured on server environment variables.');
+      }
+
+      let attempts = 0;
+      const maxAttempts = uniqueKeys.length;
+      let lastErr: any = null;
+
+      while (attempts < maxAttempts) {
+        const apiKey = uniqueKeys[(serverKeyIndex++) % uniqueKeys.length];
+        attempts++;
+
+        try {
+          if (stream) {
+            const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+            const geminiRes = await fetch(googleUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+              }),
+            });
+
+            if (!geminiRes.ok) {
+              const errBody = await geminiRes.text();
+              if (
+                geminiRes.status === 429 ||
+                geminiRes.status === 503 ||
+                errBody.includes('RESOURCE_EXHAUSTED') ||
+                errBody.includes('UNAVAILABLE')
+              ) {
+                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}), failing over...`);
+                continue;
+              }
+              return error(res, geminiRes.status, `Gemini API error: ${errBody}`);
+            }
+
+            res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-cache, no-transform');
+            res.setHeader('Connection', 'keep-alive');
+
+            if (!geminiRes.body) {
+              return error(res, 500, 'ReadableStream not supported on upstream response');
+            }
+
+            const reader = (geminiRes.body as any).getReader();
+            const decoder = new TextDecoder('utf-8');
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const text = decoder.decode(value, { stream: true });
+              res.write(text);
+            }
+            res.end();
+            return;
+          } else {
+            const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const geminiRes = await fetch(googleUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+              }),
+            });
+
+            const data = await geminiRes.json();
+
+            if (!geminiRes.ok) {
+              if (
+                geminiRes.status === 429 ||
+                geminiRes.status === 503 ||
+                data?.error?.status === 'RESOURCE_EXHAUSTED' ||
+                data?.error?.status === 'UNAVAILABLE'
+              ) {
+                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}), failing over...`);
+                continue;
+              }
+              return error(res, geminiRes.status, data?.error?.message || 'Gemini API error');
+            }
+
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            return ok(res, { text });
+          }
+        } catch (err: any) {
+          lastErr = err;
+          console.warn(`Gemini attempt ${attempts} encountered error:`, err?.message);
+        }
+      }
+
+      return error(res, 500, lastErr?.message || 'All Gemini API keys failed or exhausted.');
+    }
+
     // ── Auth routes ──────────────────────────────────────────────────────────
 
     if (resource === 'auth') {
