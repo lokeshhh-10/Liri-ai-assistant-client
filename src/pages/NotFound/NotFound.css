@@ -75,15 +75,42 @@
   animation: floatAnim 6s ease-in-out infinite alternate;
 }
 
-/* Top Left Octocat */
-.nf-octocat-space {
+/* Top Left Liri AI Radar Badge */
+.nf-badge-radar {
   top: 10%;
   left: 8%;
-  color: var(--accent, #2563eb);
-  border-color: rgba(37, 99, 235, 0.35);
-  padding: 0.85rem;
-  box-shadow: 0 0 25px rgba(37, 99, 235, 0.2);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+.nf-radar-icon {
+  animation: radarSpin 3s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes radarSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.nf-radar-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: radarPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes radarPulse {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.4); }
+}
+
 
 /* Middle Left System Badge */
 .nf-badge-sys {
@@ -405,7 +432,7 @@
 
 /* Responsive Scaling for Floating Elements */
 @media (max-width: 1200px) {
-  .nf-octocat-space { left: 4%; }
+  .nf-badge-radar { left: 4%; }
   .nf-badge-404 { right: 4%; }
   .nf-badge-sys { left: 2%; }
   .nf-badge-err { right: 2%; }
