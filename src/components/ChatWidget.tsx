@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import './ChatWidget.css';
 import SYSTEM_PROMPT from "../constants/systemPrompt";
-// import { sendGeminiRequest } from "../utils/geminiClient";
-import { sendGeminiRequest } from '../clients/geminiClient';
+import { streamGeminiRequest } from '../clients/geminiClient';
 
 interface Message {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }
@@ -14,18 +14,35 @@ const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
+      id: 'initial-welcome',
       role: 'assistant',
       content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Typewriter buffer ref for smooth line-by-line word streaming
+  const streamBufferRef = useRef<{ id: string; targetText: string; currentText: string; isFinished: boolean }>({
+    id: '',
+    targetText: '',
+    currentText: '',
+    isFinished: false,
+  });
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const handleOpenChat = (event: Event) => {
@@ -34,9 +51,8 @@ const ChatWidget: React.FC = () => {
       if (customEvent.detail?.prompt) {
         const query = customEvent.detail.prompt;
         setInputValue(query);
-        // Automatically trigger message send
         setTimeout(() => {
-          triggerQuery(query);
+          sendMessage(query);
         }, 100);
       }
     };
@@ -45,7 +61,7 @@ const ChatWidget: React.FC = () => {
     return () => {
       window.removeEventListener('open-liri-chat', handleOpenChat);
     };
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isStreaming]);
 
   useEffect(() => {
     if (isOpen) {
@@ -54,89 +70,104 @@ const ChatWidget: React.FC = () => {
     }
   }, [messages, isOpen]);
 
-  const triggerQuery = async (queryText: string) => {
-    if (!queryText.trim() || isLoading) return;
-    const userMessage = queryText.trim();
+  const sendMessage = async (userMessage: string) => {
+    if (!userMessage.trim() || isLoading || isStreaming) return;
+
+    const trimmedMsg = userMessage.trim();
     setInputValue('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
 
-    try {
-      const conversationHistory = messages
-        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
-        .join("\n");
+    const conversationHistory = messages
+      .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+      .join("\n");
 
-      const promptText = `
+    const promptText = `
 ${SYSTEM_PROMPT}
 
 ${conversationHistory}
-User: ${userMessage}
+User: ${trimmedMsg}
 Assistant:
 `;
 
-      const aiMessage = await sendGeminiRequest(promptText);
+    // Unique IDs for user and assistant messages
+    const userMsgId = `user-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const assistantMsgId = `assistant-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: aiMessage },
-      ]);
+    setMessages((prev) => [
+      ...prev,
+      { id: userMsgId, role: 'user', content: trimmedMsg },
+      { id: assistantMsgId, role: 'assistant', content: '' }
+    ]);
+
+    setIsLoading(true);
+    setIsStreaming(true);
+
+    // Initialize typewriter stream buffer
+    streamBufferRef.current = {
+      id: assistantMsgId,
+      targetText: '',
+      currentText: '',
+      isFinished: false,
+    };
+
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      const buf = streamBufferRef.current;
+      if (!buf.id) return;
+
+      if (buf.currentText.length < buf.targetText.length) {
+        const diff = buf.targetText.length - buf.currentText.length;
+        const stepSize = diff > 40 ? 5 : diff > 20 ? 3 : 2;
+        buf.currentText = buf.targetText.slice(0, buf.currentText.length + stepSize);
+
+        const newText = buf.currentText;
+        setIsLoading(false);
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === buf.id ? { ...msg, content: newText } : msg
+          )
+        );
+      } else if (buf.isFinished) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        setIsStreaming(false);
+      }
+    }, 15);
+
+    try {
+      await streamGeminiRequest(promptText, (chunkText) => {
+        streamBufferRef.current.targetText += chunkText;
+      });
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, I encountered an error. Please try again later.",
-        },
-      ]);
+      setIsLoading(false);
+      const buf = streamBufferRef.current;
+      if (!buf.targetText) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMsgId
+              ? { ...msg, content: "Sorry, I encountered an error. Please try again later." }
+              : msg
+          )
+        );
+      } else {
+        buf.targetText += "\n\n*(Error: Connection interrupted)*";
+      }
     } finally {
+      streamBufferRef.current.isFinished = true;
       setIsLoading(false);
     }
   };
 
-  const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return;
+  const handleSend = () => {
+    sendMessage(inputValue);
+  };
 
-    const userMessage = inputValue.trim();
-    setInputValue('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
-
-    try {
-  const conversationHistory = messages
-    .map(
-      (msg) =>
-        `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
-    )
-    .join("\n");
-
-  const promptText = `
-${SYSTEM_PROMPT}
-
-${conversationHistory}
-User: ${userMessage}
-Assistant:
-`;
-
-  const aiMessage = await sendGeminiRequest(promptText);
-
-  setMessages((prev) => [
-    ...prev,
-    { role: "assistant", content: aiMessage },
-  ]);
-} catch (error) {
-  console.error("Chat error:", error);
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "assistant",
-      content: "Sorry, I encountered an error. Please try again later.",
-    },
-  ]);
-} finally {
-  setIsLoading(false);
-}
-
+  const triggerQuery = (queryText: string) => {
+    sendMessage(queryText);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -147,8 +178,16 @@ Assistant:
   };
 
   const clearChat = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    streamBufferRef.current = { id: '', targetText: '', currentText: '', isFinished: true };
+    setIsStreaming(false);
+    setIsLoading(false);
     setMessages([
       {
+        id: 'initial-welcome',
         role: 'assistant',
         content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
       }
@@ -215,37 +254,48 @@ Assistant:
           </div>
 
           <div className="chat-messages">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
-              >
-                <div className="message-content">
-                  {message.role === 'assistant' ? (
-                    <ReactMarkdown
-                      components={{
-                        p: ({ node, ...props }) => <p className="markdown-p" {...props} />,
-                        strong: ({ node, ...props }) => <strong className="markdown-strong" {...props} />,
-                        em: ({ node, ...props }) => <em className="markdown-em" {...props} />,
-                        ul: ({ node, ...props }) => <ul className="markdown-ul" {...props} />,
-                        ol: ({ node, ...props }) => <ol className="markdown-ol" {...props} />,
-                        li: ({ node, ...props }) => <li className="markdown-li" {...props} />,
-                        h1: ({ node, ...props }) => <h1 className="markdown-h1" {...props} />,
-                        h2: ({ node, ...props }) => <h2 className="markdown-h2" {...props} />,
-                        h3: ({ node, ...props }) => <h3 className="markdown-h3" {...props} />,
-                        code: ({ node, ...props }) => <code className="markdown-code" {...props} />,
-                        pre: ({ node, ...props }) => <pre className="markdown-pre" {...props} />,
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  ) : (
-                    message.content
-                  )}
+            {messages.map((message, index) => {
+              // Hide empty placeholder assistant message when typing indicator is showing before first chunk
+              if (message.role === 'assistant' && !message.content && isLoading) {
+                return null;
+              }
+
+              const isLastAssistantStreaming = isStreaming && index === messages.length - 1 && message.role === 'assistant';
+              return (
+                <div
+                  key={message.id}
+                  className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+                >
+                  <div className="message-content">
+                    {message.role === 'assistant' ? (
+                      <>
+                        <ReactMarkdown
+                          components={{
+                            p: ({ node, ...props }) => <p className="markdown-p" {...props} />,
+                            strong: ({ node, ...props }) => <strong className="markdown-strong" {...props} />,
+                            em: ({ node, ...props }) => <em className="markdown-em" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="markdown-ul" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="markdown-ol" {...props} />,
+                            li: ({ node, ...props }) => <li className="markdown-li" {...props} />,
+                            h1: ({ node, ...props }) => <h1 className="markdown-h1" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="markdown-h2" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="markdown-h3" {...props} />,
+                            code: ({ node, ...props }) => <code className="markdown-code" {...props} />,
+                            pre: ({ node, ...props }) => <pre className="markdown-pre" {...props} />,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                        {isLastAssistantStreaming && <span className="streaming-cursor" />}
+                      </>
+                    ) : (
+                      message.content
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {messages.length === 1 && !isLoading && (
+              );
+            })}
+            {messages.length === 1 && !isLoading && !isStreaming && (
               <div className="chat-quick-chips">
                 <p className="chips-title">Suggested questions:</p>
                 <div className="chips-grid">
@@ -285,12 +335,12 @@ Assistant:
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={isLoading}
+              disabled={isLoading || isStreaming}
             />
             <button
               className="chat-send-btn"
               onClick={handleSend}
-              disabled={!inputValue.trim() || isLoading}
+              disabled={!inputValue.trim() || isLoading || isStreaming}
               aria-label="Send message"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -306,4 +356,7 @@ Assistant:
 };
 
 export default ChatWidget;
+
+
+
 
