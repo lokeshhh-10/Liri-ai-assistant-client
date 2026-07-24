@@ -15,11 +15,41 @@
   animation: fadeInUp 0.8s ease-out;
 }
 
+.hero-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(100, 255, 218, 0.08);
+  border: 1px solid rgba(100, 255, 218, 0.25);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #64ffda;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #64ffda;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(100, 255, 218, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(100, 255, 218, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(100, 255, 218, 0); }
+}
+
 .hero-greeting {
   font-size: 1rem;
   color: var(--accent);
   font-weight: 400;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }
 
@@ -39,6 +69,58 @@
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
+}
+
+.animate-subtitle {
+  animation: fadeInSubtitle 0.6s ease-out;
+}
+
+@keyframes fadeInSubtitle {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-liri-prompt-container {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hero-liri-label {
+  font-size: 0.825rem;
+  color: var(--accent);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.hero-liri-chips {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.hero-chip-btn {
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  color: var(--text-primary, #ccd6f6);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.hero-chip-btn:hover {
+  background: rgba(100, 255, 218, 0.1);
+  border-color: var(--accent, #64ffda);
+  color: var(--accent, #64ffda);
+  transform: translateY(-2px);
+}
+
+.highlight-btn {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
 }
 
 .hero-description {

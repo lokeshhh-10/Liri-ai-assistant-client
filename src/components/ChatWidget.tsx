@@ -2,30 +2,90 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import './ChatWidget.css';
 import SYSTEM_PROMPT from "../constants/systemPrompt";
-// import { sendGeminiRequest } from "../utils/geminiClient";
-import { sendGeminiRequest } from '../clients/geminiClient';
+import { streamGeminiRequest } from '../clients/geminiClient';
 
 interface Message {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }
 
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
+      id: 'initial-welcome',
       role: 'assistant',
       content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Typewriter buffer ref for smooth line-by-line word streaming
+  const streamBufferRef = useRef<{ id: string; targetText: string; currentText: string; isFinished: boolean }>({
+    id: '',
+    targetText: '',
+    currentText: '',
+    isFinished: false,
+  });
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  // Lock background body scrolling when in expanded fullscreen mode
+  useEffect(() => {
+    if (isOpen && isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, isFullscreen]);
+
+
+  useEffect(() => {
+    const handleOpenChat = (event: Event) => {
+      const customEvent = event as CustomEvent<{ prompt?: string }>;
+      setIsOpen(true);
+      if (customEvent.detail?.prompt) {
+        const query = customEvent.detail.prompt;
+        setInputValue(query);
+        setTimeout(() => {
+          sendMessage(query);
+        }, 100);
+      }
+    };
+
+    window.addEventListener('open-liri-chat', handleOpenChat);
+    return () => {
+      window.removeEventListener('open-liri-chat', handleOpenChat);
+    };
+  }, [messages, isLoading, isStreaming]);
 
   useEffect(() => {
     if (isOpen) {
@@ -34,49 +94,104 @@ const ChatWidget: React.FC = () => {
     }
   }, [messages, isOpen]);
 
-  const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return;
+  const sendMessage = async (userMessage: string) => {
+    if (!userMessage.trim() || isLoading || isStreaming) return;
 
-    const userMessage = inputValue.trim();
+    const trimmedMsg = userMessage.trim();
     setInputValue('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
 
-    try {
-  const conversationHistory = messages
-    .map(
-      (msg) =>
-        `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
-    )
-    .join("\n");
+    const conversationHistory = messages
+      .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+      .join("\n");
 
-  const promptText = `
+    const promptText = `
 ${SYSTEM_PROMPT}
 
 ${conversationHistory}
-User: ${userMessage}
+User: ${trimmedMsg}
 Assistant:
 `;
 
-  const aiMessage = await sendGeminiRequest(promptText);
+    // Unique IDs for user and assistant messages
+    const userMsgId = `user-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const assistantMsgId = `assistant-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
 
-  setMessages((prev) => [
-    ...prev,
-    { role: "assistant", content: aiMessage },
-  ]);
-} catch (error) {
-  console.error("Chat error:", error);
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "assistant",
-      content: "Sorry, I encountered an error. Please try again later.",
-    },
-  ]);
-} finally {
-  setIsLoading(false);
-}
+    setMessages((prev) => [
+      ...prev,
+      { id: userMsgId, role: 'user', content: trimmedMsg },
+      { id: assistantMsgId, role: 'assistant', content: '' }
+    ]);
 
+    setIsLoading(true);
+    setIsStreaming(true);
+
+    // Initialize typewriter stream buffer
+    streamBufferRef.current = {
+      id: assistantMsgId,
+      targetText: '',
+      currentText: '',
+      isFinished: false,
+    };
+
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      const buf = streamBufferRef.current;
+      if (!buf.id) return;
+
+      if (buf.currentText.length < buf.targetText.length) {
+        const diff = buf.targetText.length - buf.currentText.length;
+        const stepSize = diff > 40 ? 5 : diff > 20 ? 3 : 2;
+        buf.currentText = buf.targetText.slice(0, buf.currentText.length + stepSize);
+
+        const newText = buf.currentText;
+        setIsLoading(false);
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === buf.id ? { ...msg, content: newText } : msg
+          )
+        );
+      } else if (buf.isFinished) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        setIsStreaming(false);
+      }
+    }, 15);
+
+    try {
+      await streamGeminiRequest(promptText, (chunkText) => {
+        streamBufferRef.current.targetText += chunkText;
+      });
+    } catch (error) {
+      console.error("Chat error:", error);
+      setIsLoading(false);
+      const buf = streamBufferRef.current;
+      if (!buf.targetText) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMsgId
+              ? { ...msg, content: "Sorry, I encountered an error. Please try again later." }
+              : msg
+          )
+        );
+      } else {
+        buf.targetText += "\n\n*(Error: Connection interrupted)*";
+      }
+    } finally {
+      streamBufferRef.current.isFinished = true;
+      setIsLoading(false);
+    }
+  };
+
+  const handleSend = () => {
+    sendMessage(inputValue);
+  };
+
+  const triggerQuery = (queryText: string) => {
+    sendMessage(queryText);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,8 +202,16 @@ Assistant:
   };
 
   const clearChat = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    streamBufferRef.current = { id: '', targetText: '', currentText: '', isFinished: true };
+    setIsStreaming(false);
+    setIsLoading(false);
     setMessages([
       {
+        id: 'initial-welcome',
         role: 'assistant',
         content: "Hey! I’m Liri, Loki’s AI assistant 😊 I’m here to answer questions about Loki. What would you like to know?"
       }
@@ -117,18 +240,58 @@ Assistant:
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="chat-window">
+        <div className={`chat-window ${isFullscreen ? 'fullscreen' : ''}`}>
           <div className="chat-header">
-            <div className="chat-header-info">
-              <div className="chat-avatar">
-                <span>LI</span>
+            {isFullscreen && (
+              <div className="chat-header-left">
+                <a href="/" className="brand-link" title="Back to Portfolio">lokeshhh-10</a>
               </div>
+            )}
+            <div className="chat-header-info">
+              <img src="/liri-logo2.png" alt="Liri" className="chat-avatar-logo-img" />
               <div>
                 <h3>Liri.ai</h3>
                 <p className="chat-status">Online</p>
               </div>
             </div>
+
             <div className="chat-header-actions">
+              {/* Fullscreen Toggle Button */}
+              <button
+                className="chat-fullscreen-btn"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                aria-label={isFullscreen ? "Exit full screen" : "Full screen"}
+                title={isFullscreen ? "Exit full screen (ESC)" : "Full screen"}
+              >
+                {isFullscreen ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="4 14 10 14 10 20"></polyline>
+                    <polyline points="20 10 14 10 14 4"></polyline>
+                    <line x1="14" y1="10" x2="21" y2="3"></line>
+                    <line x1="10" y1="14" x2="3" y2="21"></line>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                )}
+              </button>
+              {/* Open /chat Route Button */}
+              <a
+                href="/chat"
+                className="chat-fullpage-btn"
+                aria-label="Open standalone view"
+                title="Open standalone view (/chat)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
               <button
                 className="chat-clear-btn"
                 onClick={clearChat}
@@ -155,38 +318,79 @@ Assistant:
           </div>
 
           <div className="chat-messages">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
-              >
-                <div className="message-content">
-                  {message.role === 'assistant' ? (
-                    <ReactMarkdown
-                      components={{
-                        p: ({ node, ...props }) => <p className="markdown-p" {...props} />,
-                        strong: ({ node, ...props }) => <strong className="markdown-strong" {...props} />,
-                        em: ({ node, ...props }) => <em className="markdown-em" {...props} />,
-                        ul: ({ node, ...props }) => <ul className="markdown-ul" {...props} />,
-                        ol: ({ node, ...props }) => <ol className="markdown-ol" {...props} />,
-                        li: ({ node, ...props }) => <li className="markdown-li" {...props} />,
-                        h1: ({ node, ...props }) => <h1 className="markdown-h1" {...props} />,
-                        h2: ({ node, ...props }) => <h2 className="markdown-h2" {...props} />,
-                        h3: ({ node, ...props }) => <h3 className="markdown-h3" {...props} />,
-                        code: ({ node, ...props }) => <code className="markdown-code" {...props} />,
-                        pre: ({ node, ...props }) => <pre className="markdown-pre" {...props} />,
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  ) : (
-                    message.content
+            {messages.map((message, index) => {
+              if (message.role === 'assistant' && !message.content && isLoading) {
+                return null;
+              }
+
+              const isLastAssistantStreaming = isStreaming && index === messages.length - 1 && message.role === 'assistant';
+              return (
+                <div
+                  key={message.id}
+                  className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+                >
+                  {message.role === 'assistant' && (
+                    <div className="avatar-col">
+                      <img
+                        src="/liri-logo2.png"
+                        alt="Liri"
+                        className={`assistant-logo-icon ${isLastAssistantStreaming ? 'animating' : ''}`}
+                      />
+                    </div>
                   )}
+                  <div className="message-content">
+                    {message.role === 'assistant' ? (
+                      <>
+                        <ReactMarkdown
+                          components={{
+                            p: ({ node, ...props }) => <p className="markdown-p" {...props} />,
+                            strong: ({ node, ...props }) => <strong className="markdown-strong" {...props} />,
+                            em: ({ node, ...props }) => <em className="markdown-em" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="markdown-ul" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="markdown-ol" {...props} />,
+                            li: ({ node, ...props }) => <li className="markdown-li" {...props} />,
+                            h1: ({ node, ...props }) => <h1 className="markdown-h1" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="markdown-h2" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="markdown-h3" {...props} />,
+                            code: ({ node, ...props }) => <code className="markdown-code" {...props} />,
+                            pre: ({ node, ...props }) => <pre className="markdown-pre" {...props} />,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                        {isLastAssistantStreaming && <span className="streaming-cursor" />}
+                      </>
+                    ) : (
+                      message.content
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {messages.length === 1 && !isLoading && !isStreaming && (
+              <div className="chat-quick-chips">
+                <p className="chips-title">Suggested questions:</p>
+                <div className="chips-grid">
+                  <button className="chip-btn" onClick={() => triggerQuery("What technologies does Loki use most?")}>
+                    💡 What tech stack does Loki use?
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("Tell me about JewelryPro ERP and its architecture.")}>
+                    🚀 Tell me about JewelryPro
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("How does LiveSurvey achieve real-time updates?")}>
+                    ⚡ How does LiveSurvey work?
+                  </button>
+                  <button className="chip-btn" onClick={() => triggerQuery("Summarize Loki's experience and background.")}>
+                    📄 Summarize Loki's background
+                  </button>
                 </div>
               </div>
-            ))}
+            )}
             {isLoading && (
               <div className="chat-message assistant-message">
+                <div className="avatar-col">
+                  <img src="/liri-logo2.png" alt="Liri" className="assistant-logo-icon animating" />
+                </div>
                 <div className="message-content typing-indicator">
                   <span></span>
                   <span></span>
@@ -198,6 +402,7 @@ Assistant:
           </div>
 
           <div className="chat-input-container">
+
             <input
               ref={inputRef}
               type="text"
@@ -206,12 +411,12 @@ Assistant:
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={isLoading}
+              disabled={isLoading || isStreaming}
             />
             <button
               className="chat-send-btn"
               onClick={handleSend}
-              disabled={!inputValue.trim() || isLoading}
+              disabled={!inputValue.trim() || isLoading || isStreaming}
               aria-label="Send message"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -227,4 +432,7 @@ Assistant:
 };
 
 export default ChatWidget;
+
+
+
 

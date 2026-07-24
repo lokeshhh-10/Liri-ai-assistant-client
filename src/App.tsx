@@ -1,4 +1,5 @@
 import './App.css';
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
@@ -16,6 +17,7 @@ import BlogEditor from './pages/Admin/BlogEditor';
 import BlogDetails from './pages/Blog/BlogDetails';
 import BlogList from './pages/Blog/BlogList';
 import NotFound from './pages/NotFound/NotFound';
+import ResumeModal from './components/ResumeModal';
 import { useState } from 'react';
 import type { Blog } from './services/blogService';
 
@@ -80,76 +82,81 @@ function AdminApp() {
   );
 }
 
-// ---- Root App ----
-const isAdminRoute = window.location.pathname.startsWith('/admin');
-const isBlogRoute = window.location.pathname.startsWith('/blog/');
-const isBlogsListRoute = window.location.pathname === '/blogs';
+// Wrapper for BlogDetails to extract slug param
+const BlogDetailsWrapper = () => {
+  const { slug } = useParams<{ slug: string }>();
+  return <BlogDetails slug={slug || ''} />;
+};
 
+// Home View Component
+const HomeView = ({ onOpenResume }: { onOpenResume: () => void }) => {
+  return (
+    <div className="App">
+      <Header />
+      <main>
+        <Hero onOpenResume={onOpenResume} />
+        <About />
+        <Projects />
+        <Tech />
+        <Blogs />
+        <Contact />
+      </main>
+      <Footer />
+      <ChatWidget />
+    </div>
+  );
+};
+
+import ChatPage from './pages/Chat/ChatPage';
+
+// Root App with react-router-dom
 function App() {
-  if (isAdminRoute) {
-    return (
-      <ThemeProvider>
-        <AuthProvider>
-          <AdminApp />
-        </AuthProvider>
-      </ThemeProvider>
-    );
-  }
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
-  if (isBlogsListRoute) {
-    return (
-      <ThemeProvider>
-        <div className="App">
-          <Header minimal={true} />
-          <BlogList />
-        </div>
-      </ThemeProvider>
-    );
-  }
-
-  if (isBlogRoute) {
-    const slug = window.location.pathname.split('/blog/')[1];
-    return (
-      <ThemeProvider>
-        <div className="App">
-          <Header minimal={true} />
-          <main>
-            <BlogDetails slug={slug} />
-          </main>
-          <Footer />
-          <ChatWidget />
-        </div>
-      </ThemeProvider>
-    );
-  }
-
-  const currentPath = window.location.pathname;
-  const isHomeRoute = currentPath === '/' || currentPath === '';
-
-  if (isHomeRoute) {
-    return (
-      <ThemeProvider>
-        <div className="App">
-          <Header />
-          <main>
-            <Hero />
-            <About />
-            <Projects />
-            <Tech />
-            <Blogs />
-            <Contact />
-          </main>
-          <Footer />
-          <ChatWidget />
-        </div>
-      </ThemeProvider>
-    );
-  }
-
-  // Any unrecognized route gets the GitHub-styled 404 page
   return (
     <ThemeProvider>
-      <NotFound />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomeView onOpenResume={() => setIsResumeOpen(true)} />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route
+            path="/blogs"
+            element={
+              <div className="App">
+                <Header minimal={true} />
+                <BlogList />
+                <ChatWidget />
+              </div>
+            }
+          />
+          <Route
+            path="/blog/:slug"
+            element={
+              <div className="App">
+                <Header minimal={true} />
+                <main>
+                  <BlogDetailsWrapper />
+                </main>
+                <Footer />
+                <ChatWidget />
+              </div>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <AuthProvider>
+                <AdminApp />
+              </AuthProvider>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
+
+        {/* Resume Modal */}
+        <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
