@@ -10,24 +10,8 @@ interface Message {
   content: string;
 }
 
-const AiSparkIcon: React.FC<{ isAnimating?: boolean }> = ({ isAnimating }) => (
-  <svg
-    className={`ai-spark-icon ${isAnimating ? 'animating' : ''}`}
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14" />
-  </svg>
-);
-
-
 const ChatPage: React.FC = () => {
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'initial-welcome',

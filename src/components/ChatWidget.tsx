@@ -55,6 +55,19 @@ const ChatWidget: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
 
+  // Lock background body scrolling when in expanded fullscreen mode
+  useEffect(() => {
+    if (isOpen && isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, isFullscreen]);
+
+
   useEffect(() => {
     const handleOpenChat = (event: Event) => {
       const customEvent = event as CustomEvent<{ prompt?: string }>;
@@ -229,15 +242,19 @@ Assistant:
       {isOpen && (
         <div className={`chat-window ${isFullscreen ? 'fullscreen' : ''}`}>
           <div className="chat-header">
-            <div className="chat-header-info">
-              <div className="chat-avatar">
-                <span>LI</span>
+            {isFullscreen && (
+              <div className="chat-header-left">
+                <a href="/" className="brand-link" title="Back to Portfolio">lokeshhh-10</a>
               </div>
+            )}
+            <div className="chat-header-info">
+              <img src="/liri-logo2.png" alt="Liri" className="chat-avatar-logo-img" />
               <div>
                 <h3>Liri.ai</h3>
                 <p className="chat-status">Online</p>
               </div>
             </div>
+
             <div className="chat-header-actions">
               {/* Fullscreen Toggle Button */}
               <button
@@ -266,8 +283,8 @@ Assistant:
               <a
                 href="/chat"
                 className="chat-fullpage-btn"
-                aria-label="Open standalone ChatGPT view"
-                title="Open standalone ChatGPT view (/chat)"
+                aria-label="Open standalone view"
+                title="Open standalone view (/chat)"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -300,10 +317,8 @@ Assistant:
             </div>
           </div>
 
-
           <div className="chat-messages">
             {messages.map((message, index) => {
-              // Hide empty placeholder assistant message when typing indicator is showing before first chunk
               if (message.role === 'assistant' && !message.content && isLoading) {
                 return null;
               }
@@ -314,6 +329,15 @@ Assistant:
                   key={message.id}
                   className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
                 >
+                  {message.role === 'assistant' && (
+                    <div className="avatar-col">
+                      <img
+                        src="/liri-logo2.png"
+                        alt="Liri"
+                        className={`assistant-logo-icon ${isLastAssistantStreaming ? 'animating' : ''}`}
+                      />
+                    </div>
+                  )}
                   <div className="message-content">
                     {message.role === 'assistant' ? (
                       <>
@@ -364,6 +388,9 @@ Assistant:
             )}
             {isLoading && (
               <div className="chat-message assistant-message">
+                <div className="avatar-col">
+                  <img src="/liri-logo2.png" alt="Liri" className="assistant-logo-icon animating" />
+                </div>
                 <div className="message-content typing-indicator">
                   <span></span>
                   <span></span>
@@ -375,6 +402,7 @@ Assistant:
           </div>
 
           <div className="chat-input-container">
+
             <input
               ref={inputRef}
               type="text"
