@@ -40,10 +40,8 @@ const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
           <h2 className="hero-title">I build software that thinks.</h2>
 
           <p className="hero-description">
-            I’m a software engineer specializing in building high-quality, scalable applications, with a strong
-            focus on AI-powered and data-driven solutions. My current work centers on developing human-centered
-            products using clean, efficient, and maintainable code. I’m passionate about crafting reliable systems 
-            that leverage data and intelligence to deliver meaningful user experiences and <span className="highlight-company">long-term value</span>.
+            Software engineer specializing in building scalable, AI-powered, and data-driven applications. 
+            I focus on developing human-centered products that deliver <span className="highlight-company">meaningful user experiences and long-term value</span>.
           </p>
 
           {/* Liri AI Prompt Chips inside Hero */}
