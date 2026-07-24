@@ -75,15 +75,42 @@
   animation: floatAnim 6s ease-in-out infinite alternate;
 }
 
-/* Top Left Octocat */
-.nf-octocat-space {
+/* Top Left Liri AI Radar Badge */
+.nf-badge-radar {
   top: 10%;
   left: 8%;
-  color: var(--accent, #2563eb);
-  border-color: rgba(37, 99, 235, 0.35);
-  padding: 0.85rem;
-  box-shadow: 0 0 25px rgba(37, 99, 235, 0.2);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+.nf-radar-icon {
+  animation: radarSpin 3s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes radarSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.nf-radar-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: radarPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes radarPulse {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.4); }
+}
+
 
 /* Middle Left System Badge */
 .nf-badge-sys {
@@ -150,6 +177,57 @@
 .nf-header {
   margin-bottom: 2rem;
 }
+
+/* GitHub Octocat Hero Illustration */
+.nf-illustration-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  width: 100%;
+  max-width: 380px;
+}
+
+.nf-illustration-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 140px;
+  background: radial-gradient(ellipse at center, rgba(31, 111, 235, 0.3) 0%, rgba(37, 99, 235, 0.08) 55%, transparent 75%);
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.nf-illustration-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: heroFloat 5s ease-in-out infinite alternate;
+}
+
+.nf-illustration-wrapper:hover .nf-illustration-img {
+  transform: scale(1.06) translateY(-6px);
+}
+
+@keyframes heroFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-8px);
+  }
+}
+
 
 .nf-code-tag {
   display: inline-block;
@@ -354,7 +432,7 @@
 
 /* Responsive Scaling for Floating Elements */
 @media (max-width: 1200px) {
-  .nf-octocat-space { left: 4%; }
+  .nf-badge-radar { left: 4%; }
   .nf-badge-404 { right: 4%; }
   .nf-badge-sys { left: 2%; }
   .nf-badge-err { right: 2%; }
