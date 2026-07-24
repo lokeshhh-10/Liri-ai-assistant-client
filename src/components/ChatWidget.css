@@ -175,6 +175,23 @@
   align-items: center;
 }
 
+.chat-header-left .brand-link {
+  background: transparent;
+  border: none;
+  color: var(--accent, #2563eb);
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.chat-header-left .brand-link:hover {
+  opacity: 0.8;
+}
+
 .chat-back-btn {
   background: transparent;
   border: none;

@@ -255,7 +255,13 @@ Assistant:
                     <polyline points="12 19 5 12 12 5"></polyline>
                   </svg>
                 </button>
-                <a href="/" className="brand-link desktop-only-brand" title="Back to Portfolio">lokeshhh-10</a>
+                <button
+                  className="brand-link desktop-only-brand"
+                  onClick={() => setIsFullscreen(false)}
+                  title="Minimize full screen"
+                >
+                  lokeshhh-10
+                </button>
               </div>
             )}
             <div className="chat-header-info">
