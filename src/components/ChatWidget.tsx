@@ -12,6 +12,7 @@ interface Message {
 
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'initial-welcome',
@@ -43,6 +44,16 @@ const ChatWidget: React.FC = () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   useEffect(() => {
     const handleOpenChat = (event: Event) => {
@@ -216,7 +227,7 @@ Assistant:
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="chat-window">
+        <div className={`chat-window ${isFullscreen ? 'fullscreen' : ''}`}>
           <div className="chat-header">
             <div className="chat-header-info">
               <div className="chat-avatar">
@@ -228,6 +239,42 @@ Assistant:
               </div>
             </div>
             <div className="chat-header-actions">
+              {/* Fullscreen Toggle Button */}
+              <button
+                className="chat-fullscreen-btn"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                aria-label={isFullscreen ? "Exit full screen" : "Full screen"}
+                title={isFullscreen ? "Exit full screen (ESC)" : "Full screen"}
+              >
+                {isFullscreen ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="4 14 10 14 10 20"></polyline>
+                    <polyline points="20 10 14 10 14 4"></polyline>
+                    <line x1="14" y1="10" x2="21" y2="3"></line>
+                    <line x1="10" y1="14" x2="3" y2="21"></line>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                )}
+              </button>
+              {/* Open /chat Route Button */}
+              <a
+                href="/chat"
+                className="chat-fullpage-btn"
+                aria-label="Open standalone ChatGPT view"
+                title="Open standalone ChatGPT view (/chat)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
               <button
                 className="chat-clear-btn"
                 onClick={clearChat}
@@ -252,6 +299,7 @@ Assistant:
               </button>
             </div>
           </div>
+
 
           <div className="chat-messages">
             {messages.map((message, index) => {

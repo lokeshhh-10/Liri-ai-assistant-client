@@ -107,6 +107,8 @@ const HomeView = ({ onOpenResume }: { onOpenResume: () => void }) => {
   );
 };
 
+import ChatPage from './pages/Chat/ChatPage';
+
 // Root App with react-router-dom
 function App() {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
@@ -116,6 +118,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomeView onOpenResume={() => setIsResumeOpen(true)} />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route
             path="/blogs"
             element={
@@ -149,6 +152,7 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
+
 
         {/* Resume Modal */}
         <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
