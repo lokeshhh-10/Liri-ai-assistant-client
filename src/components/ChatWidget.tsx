@@ -33,7 +33,7 @@ const ChatWidget: React.FC = () => {
     currentText: '',
     isFinished: false,
   });
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
