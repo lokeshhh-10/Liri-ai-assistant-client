@@ -244,7 +244,18 @@ Assistant:
           <div className="chat-header">
             {isFullscreen && (
               <div className="chat-header-left">
-                <a href="/" className="brand-link" title="Back to Portfolio">lokeshhh-10</a>
+                <button
+                  className="chat-back-btn"
+                  onClick={() => setIsFullscreen(false)}
+                  aria-label="Back"
+                  title="Back"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                </button>
+                <a href="/" className="brand-link desktop-only-brand" title="Back to Portfolio">lokeshhh-10</a>
               </div>
             )}
             <div className="chat-header-info">
@@ -372,16 +383,32 @@ Assistant:
                 <p className="chips-title">Suggested questions:</p>
                 <div className="chips-grid">
                   <button className="chip-btn" onClick={() => triggerQuery("What technologies does Loki use most?")}>
-                    💡 What tech stack does Loki use?
+                    <span className="chip-icon">💡</span>
+                    <div className="chip-text-group">
+                      <span className="chip-title">What tech stack does Loki use?</span>
+                      <span className="chip-desc">React, Node.js, TypeScript & Cloud Native</span>
+                    </div>
                   </button>
                   <button className="chip-btn" onClick={() => triggerQuery("Tell me about JewelryPro ERP and its architecture.")}>
-                    🚀 Tell me about JewelryPro
+                    <span className="chip-icon">🚀</span>
+                    <div className="chip-text-group">
+                      <span className="chip-title">Tell me about JewelryPro</span>
+                      <span className="chip-desc">ERP platform architecture & system design</span>
+                    </div>
                   </button>
                   <button className="chip-btn" onClick={() => triggerQuery("How does LiveSurvey achieve real-time updates?")}>
-                    ⚡ How does LiveSurvey work?
+                    <span className="chip-icon">⚡</span>
+                    <div className="chip-text-group">
+                      <span className="chip-title">How does LiveSurvey work?</span>
+                      <span className="chip-desc">Real-time WebSockets & live survey engine</span>
+                    </div>
                   </button>
                   <button className="chip-btn" onClick={() => triggerQuery("Summarize Loki's experience and background.")}>
-                    📄 Summarize Loki's background
+                    <span className="chip-icon">📄</span>
+                    <div className="chip-text-group">
+                      <span className="chip-title">Summarize Loki's background</span>
+                      <span className="chip-desc">Career timeline, key projects & skills</span>
+                    </div>
                   </button>
                 </div>
               </div>
