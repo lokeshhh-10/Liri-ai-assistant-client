@@ -205,6 +205,10 @@
     padding: 0 1.5rem;
   }
 
+  .hero-status-badge {
+    display: none;
+  }
+
   .hero-description {
     font-size: 1rem;
     max-width: 100%;

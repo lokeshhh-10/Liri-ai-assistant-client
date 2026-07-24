@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ minimal = false }) => {
     { id: 'tech',     label: 'Tech',     number: '03', href: null },
     { id: 'blogs',    label: 'Blog',     number: '04', href: null },
     { id: 'contact',  label: 'Contact',  number: '05', href: null },
-    { id: 'chat',     label: 'AI Chat',  number: '06', href: '/chat' },
+    { id: 'chat',     label: 'Liri.ai',  number: '06', href: '/chat' },
   ];
 
 
