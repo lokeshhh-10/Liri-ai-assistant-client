@@ -14,7 +14,7 @@ const BlogList: React.FC = () => {
   useEffect(() => {
     document.title = 'Blog — Lokeshwaran K';
     getAllBlogs()
-      .then(data => setBlogs(data.blogs))
+      .then(data => setBlogs((data.blogs || []).filter(b => b.isPublished)))
       .catch(() => setError('Could not load blogs. Please try again.'))
       .finally(() => setIsLoading(false));
   }, []);

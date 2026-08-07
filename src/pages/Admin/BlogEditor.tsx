@@ -262,7 +262,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ blog, onSuccess, onCancel }) =>
             value={title}
             onChange={handleTitleChange}
           />
-
+  
           {/* Slug */}
           <div className="editor-slug-row">
             <span className="editor-slug-prefix">lokeshhh.me/blog/</span>
