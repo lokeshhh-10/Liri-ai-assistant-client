@@ -265,7 +265,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ blog, onSuccess, onCancel }) =>
 
           {/* Slug */}
           <div className="editor-slug-row">
-            <span className="editor-slug-prefix">lokeshhh-10.vercel.app/blog/</span>
+            <span className="editor-slug-prefix">lokeshhh.me/blog/</span>
             <input
               id="blog-slug"
               type="text"
