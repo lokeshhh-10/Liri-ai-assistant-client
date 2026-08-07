@@ -23,7 +23,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNewPost, onEditPost }
     setIsLoading(true);
     setError('');
     try {
-      const data = await getAllBlogs();
+      const data = await getAllBlogs({ all: true });
       setBlogs(data.blogs);
     } catch (err: any) {
       setError(err.message || 'Failed to load blogs.');

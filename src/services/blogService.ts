@@ -32,8 +32,8 @@ async function apiRequest(path: string, options: RequestInit = {}) {
   return res.json();
 }
 
-export const getAllBlogs = (): Promise<{ blogs: Blog[] }> =>
-  apiRequest('/blogs');
+export const getAllBlogs = (options?: { all?: boolean }): Promise<{ blogs: Blog[] }> =>
+  apiRequest(options?.all ? '/blogs?all=true' : '/blogs');
 
 export const getBlogById = (id: string): Promise<{ blog: Blog }> =>
   apiRequest(`/blogs/${id}`);

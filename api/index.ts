@@ -278,7 +278,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       // GET /api/blogs/slug/:slug
       if (param === 'slug' && action && method === 'GET') {
-        const blog = await blogs.findOne({ slug: action, isPublished: true });
+        const authPayload = verifyToken(req);
+        const query = authPayload ? { slug: action } : { slug: action, isPublished: true };
+        const blog = await blogs.findOne(query);
         if (!blog) return error(res, 404, 'Blog not found');
         res.setHeader('Cache-Control', 'public, s-maxage=300, max-age=30, stale-while-revalidate=600');
         return ok(res, { blog });
@@ -288,7 +290,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       if (!param) {
         if (method === 'GET') {
           const authPayload = verifyToken(req);
-          const query = authPayload ? {} : { isPublished: true };
+          const url = new URL(req.url ?? '', 'http://localhost');
+          const includeAll = req.query?.all === 'true' || req.query?.includeDrafts === 'true' || url.searchParams.get('all') === 'true' || url.searchParams.get('includeDrafts') === 'true';
+          const query = (authPayload && includeAll) ? {} : { isPublished: true };
           const sort = { publishedAt: -1, createdAt: -1 } as const;
           const blogList = await blogs.find(query).sort(sort).toArray();
           return ok(res, { blogs: blogList });
