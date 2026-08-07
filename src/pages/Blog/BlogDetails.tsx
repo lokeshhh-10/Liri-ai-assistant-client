@@ -35,6 +35,66 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ slug }) => {
     return () => { cancelled = true; };
   }, [slug]);
 
+  useEffect(() => {
+    if (!blog?.content || loading) return;
+
+    const contentEl = document.querySelector('.blog-content');
+    if (!contentEl) return;
+
+    const preNodes = contentEl.querySelectorAll('pre');
+    preNodes.forEach((pre) => {
+      if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'code-copy-btn';
+      copyBtn.setAttribute('aria-label', 'Copy code to clipboard');
+      copyBtn.setAttribute('title', 'Copy code');
+      copyBtn.type = 'button';
+      copyBtn.innerHTML = `
+        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
+
+      copyBtn.addEventListener('click', async () => {
+        const codeElement = pre.querySelector('code');
+        const codeText = codeElement ? codeElement.innerText : pre.innerText;
+
+        try {
+          await navigator.clipboard.writeText(codeText);
+          copyBtn.classList.add('copied');
+          const copyIcon = copyBtn.querySelector('.copy-icon') as HTMLElement | null;
+          const checkIcon = copyBtn.querySelector('.check-icon') as HTMLElement | null;
+          if (copyIcon && checkIcon) {
+            copyIcon.style.display = 'none';
+            checkIcon.style.display = 'block';
+          }
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            if (copyIcon && checkIcon) {
+              copyIcon.style.display = 'block';
+              checkIcon.style.display = 'none';
+            }
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy code:', err);
+        }
+      });
+
+      wrapper.appendChild(copyBtn);
+    });
+  }, [blog, loading]);
+
   if (error) {
     return <NotFound />;
   }
