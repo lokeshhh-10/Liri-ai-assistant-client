@@ -7,11 +7,14 @@ interface Highlight {
   desc: string;
 }
 
-interface ArchNode {
-  step: string;
+interface ArchGroup {
+  name: string;
+  color: 'purple' | 'cyan' | 'green';
+  nodes: { label: string; sub: string; icon: string; badge?: string }[];
+}
+
+interface ArchConnection {
   label: string;
-  sub: string;
-  icon: string;
 }
 
 interface Project {
@@ -24,7 +27,8 @@ interface Project {
   githubUrl: string;
   liveUrl: string;
   highlights: Highlight[];
-  architectureNodes: ArchNode[];
+  archGroups: ArchGroup[];
+  archConnections: ArchConnection[];
   codeSnippet: string;
   codeLanguage: string;
 }
@@ -61,11 +65,35 @@ const Projects: React.FC = () => {
         { icon: '🔒', title: 'JWT Authentication', desc: 'Secure user identity verification and role authorization' },
         { icon: '🗄️', title: 'NoSQL Aggregations', desc: 'MongoDB schema optimized for dynamic survey templates' },
       ],
-      architectureNodes: [
-        { step: '01', label: 'React Client', sub: 'Chart.js Dashboard UI', icon: '💻' },
-        { step: '02', label: 'Socket.io Hub', sub: 'Real-Time Event Gateway', icon: '⚡' },
-        { step: '03', label: 'Express API', sub: 'Node.js Controller Service', icon: '🛠️' },
-        { step: '04', label: 'MongoDB Store', sub: 'Aggregated Survey Collections', icon: '🗄️' },
+      archGroups: [
+        {
+          name: 'CLIENT TIER',
+          color: 'purple',
+          nodes: [
+            { label: 'React Form Engine', sub: 'Dynamic Survey UI', icon: '💻' },
+            { label: 'Chart.js Dashboard', sub: 'Streaming Analytics', icon: '📊' },
+          ],
+        },
+        {
+          name: 'REAL-TIME & API TIER',
+          color: 'cyan',
+          nodes: [
+            { label: 'Socket.io Hub', sub: 'Event Bus (WSS)', icon: '⚡' },
+            { label: 'Express API Handler', sub: 'Node.js Service', icon: '🛠️' },
+          ],
+        },
+        {
+          name: 'DATA & STORAGE TIER',
+          color: 'green',
+          nodes: [
+            { label: 'MongoDB Database', sub: 'Survey Collections', icon: '🗄️' },
+            { label: 'JWT Auth Engine', sub: 'Session Validation', icon: '🔒' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'WSS Event' },
+        { label: 'MongoDB Query' },
       ],
       codeLanguage: 'typescript',
       codeSnippet: `// LiveSurvey Real-Time Socket Event Processor
@@ -98,11 +126,35 @@ io.on('connection', (socket) => {
         { icon: '🗄️', title: 'PostgreSQL & Prisma ORM', desc: 'ACID-compliant relational schema design' },
         { icon: '☁️', title: 'Cloudinary Asset Sync', desc: 'Automated product catalog media storage and optimization' },
       ],
-      architectureNodes: [
-        { step: '01', label: 'Dashboard UI', sub: 'React & MUI Components', icon: '🖥️' },
-        { step: '02', label: 'Redux Toolkit', sub: 'Global Client State Manager', icon: '📦' },
-        { step: '03', label: 'Prisma ORM', sub: 'Type-Safe PostgreSQL Gateway', icon: '💎' },
-        { step: '04', label: 'RBAC Security', sub: 'JWT Authorization Middleware', icon: '🛡️' },
+      archGroups: [
+        {
+          name: 'RETAIL PORTAL',
+          color: 'purple',
+          nodes: [
+            { label: 'React & MUI Portal', sub: 'Billing & Stock Views', icon: '🖥️' },
+            { label: 'Redux Toolkit', sub: 'Global Client State', icon: '📦' },
+          ],
+        },
+        {
+          name: 'SECURITY & API CONTROLLER',
+          color: 'cyan',
+          nodes: [
+            { label: 'RBAC Guard', sub: 'Role Auth Middleware', icon: '🛡️' },
+            { label: 'Express Controllers', sub: 'Billing & Stock Engine', icon: '⚙️' },
+          ],
+        },
+        {
+          name: 'DATA & CLOUD STORAGE',
+          color: 'green',
+          nodes: [
+            { label: 'Prisma ORM & Postgres', sub: 'ACID Relational Store', badge: '', icon: '💎' },
+            { label: 'Cloudinary Media API', sub: 'Product Catalog Photos', icon: '☁️' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'REST API' },
+        { label: 'Prisma Query' },
       ],
       codeLanguage: 'prisma',
       codeSnippet: `// JewelryPro Inventory Relational Schema
@@ -133,11 +185,35 @@ model InventoryItem {
         { icon: '⚡', title: 'Express API Proxy', desc: 'Secure key proxying with streaming prompt execution' },
         { icon: '📄', title: 'Knowledge Engine', desc: 'Structured system context feeding developer background info' },
       ],
-      architectureNodes: [
-        { step: '01', label: 'Floating Widget', sub: 'React UI Chat Interface', icon: '💬' },
-        { step: '02', label: 'Express Proxy', sub: 'API Rate-Limited Handler', icon: '⚡' },
-        { step: '03', label: 'Gemini 2.0 API', sub: 'Google LLM Inference Engine', icon: '🤖' },
-        { step: '04', label: 'Context Store', sub: 'Developer Knowledge System', icon: '📄' },
+      archGroups: [
+        {
+          name: 'ASSISTANT WIDGET',
+          color: 'purple',
+          nodes: [
+            { label: 'React Chat Widget', sub: 'Conversational UI', icon: '💬' },
+            { label: 'Prompt Dispatcher', sub: 'Single-Click Triggers', icon: '⚡' },
+          ],
+        },
+        {
+          name: 'EXPRESS PROXY & CONTEXT',
+          color: 'cyan',
+          nodes: [
+            { label: 'Express Proxy Guard', sub: 'API Token Protection', icon: '🛡️' },
+            { label: 'Knowledge Engine', sub: 'Portfolio System Prompt', icon: '📄' },
+          ],
+        },
+        {
+          name: 'GEMINI LLM ENGINE',
+          color: 'green',
+          nodes: [
+            { label: 'Gemini 2.0 Flash API', sub: 'Google Inference Service', icon: '🤖' },
+            { label: 'MongoDB Log Store', sub: 'Session History', icon: '🗄️' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'Prompt Payload' },
+        { label: 'LLM Stream' },
       ],
       codeLanguage: 'typescript',
       codeSnippet: `// Liri AI Gemini Inference Proxy Service
@@ -168,11 +244,35 @@ export const askLiriAI = async (userPrompt: string, history: ChatMessage[]) => {
         { icon: '🏗️', title: 'MVC Architecture', desc: 'Strict separation of routes, controllers, and services' },
         { icon: '📁', title: 'Cloud Media Store', desc: 'Cloudinary photo upload pipeline for room listings' },
       ],
-      architectureNodes: [
-        { step: '01', label: 'Guest Web UI', sub: 'React & Tailwind View', icon: '🏨' },
-        { step: '02', label: 'JWT Gateway', sub: 'Encrypted Token Validation', icon: '🔐' },
-        { step: '03', label: 'MVC Controller', sub: 'Node & Express Service Engine', icon: '⚙️' },
-        { step: '04', label: 'MongoDB Store', sub: 'Room & Booking Collections', icon: '🗄️' },
+      archGroups: [
+        {
+          name: 'BOOKING PORTAL',
+          color: 'purple',
+          nodes: [
+            { label: 'React Booking App', sub: 'Guest UI & Inventory', icon: '🏨' },
+            { label: 'Redux State Engine', sub: 'Global Room State', icon: '📦' },
+          ],
+        },
+        {
+          name: 'MVC BUSINESS ENGINE',
+          color: 'cyan',
+          nodes: [
+            { label: 'JWT Auth Router', sub: 'Bearer Session Validation', icon: '🔐' },
+            { label: 'Room Controllers', sub: 'Allocation & Booking Logic', icon: '⚙️' },
+          ],
+        },
+        {
+          name: 'PERSISTENCE & MEDIA',
+          color: 'green',
+          nodes: [
+            { label: 'MongoDB Collections', sub: 'Room & Guest Collections', icon: '🗄️' },
+            { label: 'Cloudinary Store', sub: 'Room Photo Gallery', icon: '📁' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'Bearer Token' },
+        { label: 'Mongo DB Op' },
       ],
       codeLanguage: 'typescript',
       codeSnippet: `// Guest Room Booking Controller Handler
@@ -355,16 +455,35 @@ export const createBooking = async (req: Request, res: Response) => {
                     )}
 
                     {currentTab === 'architecture' && (
-                      <div className="sandbox-arch-grid">
-                        {project.architectureNodes.map((node, i) => (
-                          <div key={i} className="arch-node-card">
-                            <div className="arch-card-top">
-                              <span className="arch-step-badge">{node.step}</span>
-                              <span className="arch-node-icon">{node.icon}</span>
+                      <div className="process-diagram-wrapper">
+                        {project.archGroups.map((group, groupIdx) => (
+                          <React.Fragment key={groupIdx}>
+                            <div className={`process-subsystem-box color-${group.color}`}>
+                              <div className="subsystem-header-title">{group.name}</div>
+                              <div className="subsystem-nodes-column">
+                                {group.nodes.map((node, nodeIdx) => (
+                                  <div key={nodeIdx} className="process-node-card">
+                                    <span className="process-node-icon">{node.icon}</span>
+                                    <div className="process-node-meta">
+                                      <div className="process-node-label">{node.label}</div>
+                                      <div className="process-node-sub">{node.sub}</div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div className="arch-node-label">{node.label}</div>
-                            <div className="arch-node-sub">{node.sub}</div>
-                          </div>
+
+                            {groupIdx < project.archGroups.length - 1 && (
+                              <div className="process-flow-connector">
+                                <div className="connector-line-wrapper">
+                                  <span className="connector-label-pill">
+                                    {project.archConnections[groupIdx]?.label || 'Data Flow'}
+                                  </span>
+                                  <div className="connector-arrow">➔</div>
+                                </div>
+                              </div>
+                            )}
+                          </React.Fragment>
                         ))}
                       </div>
                     )}
