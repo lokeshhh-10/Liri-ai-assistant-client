@@ -351,6 +351,8 @@
 }
 
 .tiptap-editor-content li { margin: 0.25rem 0; }
+.tiptap-editor-content li p { margin: 0; }
+.tiptap-editor-content li p + p { margin-top: 0.5rem; }
 
 .tiptap-editor-content blockquote {
   border-left: 3px solid var(--accent);
@@ -424,6 +426,8 @@
 .editor-preview p  { margin: 0.75rem 0; }
 .editor-preview ul, .editor-preview ol { padding-left: 1.5rem; margin: 0.75rem 0; }
 .editor-preview li { margin: 0.25rem 0; }
+.editor-preview li p { margin: 0; }
+.editor-preview li p + p { margin-top: 0.5rem; }
 .editor-preview blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; margin: 1rem 0; font-style: italic; }
 .editor-preview code { background: rgba(37,99,235,0.08); border-radius: 4px; padding: 0.15rem 0.4rem; font-family: monospace; font-size: 0.875em; color: var(--accent); }
 .editor-preview pre  { background: #0d1117; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; overflow-x: auto; }
