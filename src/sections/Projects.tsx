@@ -297,7 +297,8 @@ export const createBooking = async (req: Request, res: Response) => {
     : projects.filter((p) => p.category === selectedFilter);
 
   const getActiveTab = (projectId: number): 'highlights' | 'architecture' | 'code' => {
-    return activeTabs[projectId] || 'highlights';
+    const tab = activeTabs[projectId];
+    return tab === 'code' ? 'code' : 'highlights';
   };
 
   const handleTabChange = (projectId: number, tab: 'highlights' | 'architecture' | 'code') => {
@@ -423,12 +424,13 @@ export const createBooking = async (req: Request, res: Response) => {
                       >
                         ⚡ Highlights
                       </button>
-                      <button
+                      {/* Architecture Tab commented out for now per user request */}
+                      {/* <button
                         className={`sandbox-tab-btn ${currentTab === 'architecture' ? 'active' : ''}`}
                         onClick={() => handleTabChange(project.id, 'architecture')}
                       >
                         🏗️ Arch
-                      </button>
+                      </button> */}
                       <button
                         className={`sandbox-tab-btn ${currentTab === 'code' ? 'active' : ''}`}
                         onClick={() => handleTabChange(project.id, 'code')}
@@ -454,7 +456,8 @@ export const createBooking = async (req: Request, res: Response) => {
                       </div>
                     )}
 
-                    {currentTab === 'architecture' && (
+                    {/* Architecture diagram section commented out for now per user request */}
+                    {/* {currentTab === 'architecture' && (
                       <div className="process-diagram-wrapper">
                         {project.archGroups.map((group, groupIdx) => (
                           <React.Fragment key={groupIdx}>
@@ -486,7 +489,7 @@ export const createBooking = async (req: Request, res: Response) => {
                           </React.Fragment>
                         ))}
                       </div>
-                    )}
+                    )} */}
 
                     {currentTab === 'code' && (
                       <div className="sandbox-code-container">
