@@ -46,7 +46,10 @@ const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
 
           {/* Liri AI Prompt Chips inside Hero */}
           <div className="hero-liri-prompt-container">
-            <span className="hero-liri-label">🤖 Ask my AI Assistant (Liri):</span>
+            <span className="hero-liri-label">
+              <img src="/liri-logo2.png" alt="Liri logo" className="hero-liri-logo-icon" />
+              Ask my AI Assistant (Liri):
+            </span>
             <div className="hero-liri-chips">
               <button 
                 className="hero-chip-btn" 

@@ -61,6 +61,13 @@
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }
 
+.project-liri-logo-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 .ask-liri-project-btn:hover {
   background: rgba(37, 99, 235, 0.1);
   transform: translateY(-2px);

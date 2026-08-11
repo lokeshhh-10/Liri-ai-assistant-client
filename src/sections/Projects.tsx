@@ -217,7 +217,8 @@ const Projects: React.FC = () => {
                     onClick={() => triggerLiriForProject(project.title)}
                     title={`Ask Liri AI about ${project.title}`}
                   >
-                    🤖 Ask Liri about this
+                    <img src="/liri-logo2.png" alt="Liri logo" className="project-liri-logo-icon" />
+                    Ask Liri about this
                   </button>
                 </div>
               </div>
