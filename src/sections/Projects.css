@@ -213,7 +213,7 @@
 }
 
 /* ==========================================================================
-   Fixed-Size Developer Sandbox Window Styles
+   Strict Fixed-Size Developer Sandbox Window Styles
    ========================================================================== */
 
 .sandbox-window {
@@ -224,7 +224,9 @@
   box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  height: 360px;
+  height: 360px !important;
+  min-height: 360px !important;
+  max-height: 360px !important;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -238,7 +240,9 @@
 /* Header Bar */
 .sandbox-bar {
   flex-shrink: 0;
-  height: 48px;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
   background: rgba(15, 23, 42, 0.85);
   padding: 0 1rem;
   display: flex;
@@ -325,10 +329,12 @@
   font-weight: 600;
 }
 
-/* Fixed Body Container */
+/* Strict Fixed Body Container */
 .sandbox-body {
   flex: 1;
-  height: 312px;
+  height: 312px !important;
+  min-height: 312px !important;
+  max-height: 312px !important;
   padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
@@ -693,13 +699,15 @@
   }
 
   .sandbox-window {
-    height: auto;
-    min-height: 360px;
+    height: auto !important;
+    min-height: 360px !important;
+    max-height: none !important;
   }
 
   .sandbox-body {
-    height: auto;
-    min-height: 312px;
+    height: auto !important;
+    min-height: 312px !important;
+    max-height: none !important;
   }
 }
 
