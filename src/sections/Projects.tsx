@@ -1,16 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Projects.css';
 
+interface Highlight {
+  icon: string;
+  title: string;
+  desc: string;
+}
+
+interface ArchGroup {
+  name: string;
+  color: 'purple' | 'cyan' | 'green';
+  nodes: { label: string; sub: string; icon: string; badge?: string }[];
+}
+
+interface ArchConnection {
+  label: string;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  category: string;
+  filename: string;
+  description: string;
+  technologies: string[];
+  githubUrl: string;
+  liveUrl: string;
+  highlights: Highlight[];
+  archGroups: ArchGroup[];
+  archConnections: ArchConnection[];
+  codeSnippet: string;
+  codeLanguage: string;
+}
+
 const Projects: React.FC = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState<{ [key: number]: number }>({});
-  const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
-  const [activeLightboxProject, setActiveLightboxProject] = useState<number | null>(null);
-  const [activeLightboxImageIndex, setActiveLightboxImageIndex] = useState<number>(0);
+  const [activeTabs, setActiveTabs] = useState<{ [key: number]: 'highlights' | 'architecture' | 'code' }>({});
   const [showAll, setShowAll] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
   const INITIAL_COUNT = 3;
-
-  const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
   const triggerLiriForProject = (title: string) => {
     window.dispatchEvent(
@@ -20,111 +48,265 @@ const Projects: React.FC = () => {
     );
   };
 
-  const getProjectImages = (projectId: number): string[] => {
-    const project = projects.find(p => p.id === projectId);
-    if (!project) return [];
-    return project.images || (project.image ? [project.image] : []);
-  };
-
-  const projects = [
+  const projects: Project[] = [
     {
       id: 1,
       title: 'LiveSurvey',
       category: 'Real-Time',
-      description: 'LiveSurvey is a full-stack real-time survey platform built to handle dynamic form creation and live analytics streaming. It implements an event-driven communication model using Socket.io to process and push survey responses instantly to connected clients. The application integrates Chart.js for real-time data visualization, enabling interactive dashboards that update as responses are submitted.',
+      filename: 'LiveSurvey.config.ts',
+      description:
+        'LiveSurvey is a full-stack real-time survey platform built to handle dynamic form creation and live analytics streaming. It implements an event-driven communication model using Socket.io to process and push survey responses instantly to connected clients. The application integrates Chart.js for real-time data visualization, enabling interactive dashboards that update as responses are submitted.',
       technologies: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.io', 'JWT', 'Chart.js', 'Tailwind CSS'],
       githubUrl: 'https://github.com/lokeshhh-10/LiveSurvey',
       liveUrl: 'https://live-survey-rho.vercel.app/',
-      images: ['/Live_1.png', '/Live_2.png', '/Live_3.png', '/Live_4.png']
+      highlights: [
+        { icon: '⚡', title: 'Event-Driven Stream', desc: 'Real-time response broadcasting via Socket.io channels' },
+        { icon: '📊', title: 'Dynamic Visual Analytics', desc: 'Live Chart.js integration for streaming response metrics' },
+        { icon: '🔒', title: 'JWT Authentication', desc: 'Secure user identity verification and role authorization' },
+        { icon: '🗄️', title: 'NoSQL Aggregations', desc: 'MongoDB schema optimized for dynamic survey templates' },
+      ],
+      archGroups: [
+        {
+          name: 'CLIENT TIER',
+          color: 'purple',
+          nodes: [
+            { label: 'React Form Engine', sub: 'Dynamic Survey UI', icon: '💻' },
+            { label: 'Chart.js Dashboard', sub: 'Streaming Analytics', icon: '📊' },
+          ],
+        },
+        {
+          name: 'REAL-TIME & API TIER',
+          color: 'cyan',
+          nodes: [
+            { label: 'Socket.io Hub', sub: 'Event Bus (WSS)', icon: '⚡' },
+            { label: 'Express API Handler', sub: 'Node.js Service', icon: '🛠️' },
+          ],
+        },
+        {
+          name: 'DATA & STORAGE TIER',
+          color: 'green',
+          nodes: [
+            { label: 'MongoDB Database', sub: 'Survey Collections', icon: '🗄️' },
+            { label: 'JWT Auth Engine', sub: 'Session Validation', icon: '🔒' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'WSS Event' },
+        { label: 'MongoDB Query' },
+      ],
+      codeLanguage: 'typescript',
+      codeSnippet: `// LiveSurvey Real-Time Socket Event Processor
+io.on('connection', (socket) => {
+  socket.on('submit_response', async ({ surveyId, optionId }) => {
+    const updatedSurvey = await SurveyModel.findByIdAndUpdate(
+      surveyId,
+      { $inc: { [\`results.\${optionId}\`]: 1 } },
+      { new: true }
+    );
+
+    // Broadcast updated chart analytics to room subscribers
+    io.to(surveyId).emit('analytics_update', updatedSurvey.results);
+  });
+});`,
     },
     {
       id: 2,
       title: 'JewelryPro',
       category: 'ERP / CRM',
-      description: 'JEWELRYPRO is a scalable, full-stack Jewelry ERP platform developed for a jewelry business to modernize and digitize core retail operations. The system centralizes billing, inventory tracking, and customer management into a single, secure web application, enabling efficient store operations and role-based access.',
+      filename: 'JewelryPro.schema.prisma',
+      description:
+        'JEWELRYPRO is a scalable, full-stack Jewelry ERP platform developed for a jewelry business to modernize and digitize core retail operations. The system centralizes billing, inventory tracking, and customer management into a single, secure web application, enabling efficient store operations and role-based access.',
       technologies: ['React', 'Redux', 'MUI', 'Node.js', 'PostgreSQL', 'Prisma', 'Express', 'JWT', 'Cloudinary', 'RBAC'],
       githubUrl: '',
       liveUrl: '',
-      images: ['/Jewellery_1.png', '/Jewellery_2.png', '/Jewellery_3.png', '/Jewellery_4.png', '/Jewellery_5.png', '/Jewellery_6.png', '/Jewellery_7.png', '/Jewellery_8.png', '/Jewellery_9.png', '/Jewellery_10.png']
+      highlights: [
+        { icon: '💼', title: 'Retail Operations Pipeline', desc: 'Centralized billing, inventory, and customer management' },
+        { icon: '🛡️', title: 'Role-Based Access (RBAC)', desc: 'Granular permissions for Admin, Manager, and Staff' },
+        { icon: '🗄️', title: 'PostgreSQL & Prisma ORM', desc: 'ACID-compliant relational schema design' },
+        { icon: '☁️', title: 'Cloudinary Asset Sync', desc: 'Automated product catalog media storage and optimization' },
+      ],
+      archGroups: [
+        {
+          name: 'RETAIL PORTAL',
+          color: 'purple',
+          nodes: [
+            { label: 'React & MUI Portal', sub: 'Billing & Stock Views', icon: '🖥️' },
+            { label: 'Redux Toolkit', sub: 'Global Client State', icon: '📦' },
+          ],
+        },
+        {
+          name: 'SECURITY & API CONTROLLER',
+          color: 'cyan',
+          nodes: [
+            { label: 'RBAC Guard', sub: 'Role Auth Middleware', icon: '🛡️' },
+            { label: 'Express Controllers', sub: 'Billing & Stock Engine', icon: '⚙️' },
+          ],
+        },
+        {
+          name: 'DATA & CLOUD STORAGE',
+          color: 'green',
+          nodes: [
+            { label: 'Prisma ORM & Postgres', sub: 'ACID Relational Store', badge: '', icon: '💎' },
+            { label: 'Cloudinary Media API', sub: 'Product Catalog Photos', icon: '☁️' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'REST API' },
+        { label: 'Prisma Query' },
+      ],
+      codeLanguage: 'prisma',
+      codeSnippet: `// JewelryPro Inventory Relational Schema
+model InventoryItem {
+  id          String   @id @default(uuid())
+  sku         String   @unique
+  name        String
+  category    Category @relation(fields: [categoryId], references: [id])
+  weightGrams Float
+  purityKarat Int
+  stockCount  Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}`,
     },
     {
       id: 3,
       title: 'Liri - Ai Assistant',
       category: 'AI / LLM',
-      description: 'LIRI is an AI-powered portfolio assistant designed to make your portfolio interactive and conversational. Instead of just displaying static project details, LIRI intelligently engages with users, answering questions about skills, experience, and projects in real time using Gemini API.',
+      filename: 'LiriAssistant.service.ts',
+      description:
+        'LIRI is an AI-powered portfolio assistant designed to make your portfolio interactive and conversational. Instead of just displaying static project details, LIRI intelligently engages with users, answering questions about skills, experience, and projects in real time using Gemini API.',
       technologies: ['React', 'Typescript', 'Node.js', 'Express', 'MongoDB', 'Gemini API'],
       githubUrl: 'https://github.com/lokeshhh-10/Liri-ai-assistant-client',
       liveUrl: '',
-      image: '/Liri.png'
+      highlights: [
+        { icon: '🤖', title: 'Gemini LLM Integration', desc: 'Natural language queries over developer portfolio context' },
+        { icon: '💬', title: 'Interactive Chat Widget', desc: 'Non-blocking floating assistant with single-click triggers' },
+        { icon: '⚡', title: 'Express API Proxy', desc: 'Secure key proxying with streaming prompt execution' },
+        { icon: '📄', title: 'Knowledge Engine', desc: 'Structured system context feeding developer background info' },
+      ],
+      archGroups: [
+        {
+          name: 'ASSISTANT WIDGET',
+          color: 'purple',
+          nodes: [
+            { label: 'React Chat Widget', sub: 'Conversational UI', icon: '💬' },
+            { label: 'Prompt Dispatcher', sub: 'Single-Click Triggers', icon: '⚡' },
+          ],
+        },
+        {
+          name: 'EXPRESS PROXY & CONTEXT',
+          color: 'cyan',
+          nodes: [
+            { label: 'Express Proxy Guard', sub: 'API Token Protection', icon: '🛡️' },
+            { label: 'Knowledge Engine', sub: 'Portfolio System Prompt', icon: '📄' },
+          ],
+        },
+        {
+          name: 'GEMINI LLM ENGINE',
+          color: 'green',
+          nodes: [
+            { label: 'Gemini 2.0 Flash API', sub: 'Google Inference Service', icon: '🤖' },
+            { label: 'MongoDB Log Store', sub: 'Session History', icon: '🗄️' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'Prompt Payload' },
+        { label: 'LLM Stream' },
+      ],
+      codeLanguage: 'typescript',
+      codeSnippet: `// Liri AI Gemini Inference Proxy Service
+export const askLiriAI = async (userPrompt: string, history: ChatMessage[]) => {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: PORTFOLIO_KNOWLEDGE_BASE
+  });
+
+  const chat = model.startChat({ history });
+  const response = await chat.sendMessage(userPrompt);
+  return response.response.text();
+};`,
     },
     {
       id: 4,
       title: 'Guest Room Application',
       category: 'Full-Stack',
-      description: 'The Guest Room Application is a scalable, full-stack management system engineered to digitize and optimize guest accommodation workflows. It provides a secure, API-driven platform for handling room inventory, guest lifecycle management, and booking operations.',
+      filename: 'GuestRoom.controller.ts',
+      description:
+        'The Guest Room Application is a scalable, full-stack management system engineered to digitize and optimize guest accommodation workflows. It provides a secure, API-driven platform for handling room inventory, guest lifecycle management, and booking operations.',
       technologies: ['React', 'Redux', 'Tailwind CSS', 'Node.js', 'Express', 'JWT', 'Cloudinary', 'MongoDB', 'MVC'],
       githubUrl: 'https://github.com/lokeshhh-10/Guest-Room-App',
       liveUrl: '',
-      images: ['/Guest_1.png', '/Guest_2.png', '/Guest_3.png', '/Guest_4.png', '/Guest_5.png']
-    }
+      highlights: [
+        { icon: '🏨', title: 'Guest Booking Lifecycle', desc: 'End-to-end room allocation and status tracking' },
+        { icon: '🔐', title: 'JWT Session Security', desc: 'Encrypted bearer token auth with role validation' },
+        { icon: '🏗️', title: 'MVC Architecture', desc: 'Strict separation of routes, controllers, and services' },
+        { icon: '📁', title: 'Cloud Media Store', desc: 'Cloudinary photo upload pipeline for room listings' },
+      ],
+      archGroups: [
+        {
+          name: 'BOOKING PORTAL',
+          color: 'purple',
+          nodes: [
+            { label: 'React Booking App', sub: 'Guest UI & Inventory', icon: '🏨' },
+            { label: 'Redux State Engine', sub: 'Global Room State', icon: '📦' },
+          ],
+        },
+        {
+          name: 'MVC BUSINESS ENGINE',
+          color: 'cyan',
+          nodes: [
+            { label: 'JWT Auth Router', sub: 'Bearer Session Validation', icon: '🔐' },
+            { label: 'Room Controllers', sub: 'Allocation & Booking Logic', icon: '⚙️' },
+          ],
+        },
+        {
+          name: 'PERSISTENCE & MEDIA',
+          color: 'green',
+          nodes: [
+            { label: 'MongoDB Collections', sub: 'Room & Guest Collections', icon: '🗄️' },
+            { label: 'Cloudinary Store', sub: 'Room Photo Gallery', icon: '📁' },
+          ],
+        },
+      ],
+      archConnections: [
+        { label: 'Bearer Token' },
+        { label: 'Mongo DB Op' },
+      ],
+      codeLanguage: 'typescript',
+      codeSnippet: `// Guest Room Booking Controller Handler
+export const createBooking = async (req: Request, res: Response) => {
+  const { roomId, checkIn, checkOut, guestId } = req.body;
+  const isVacant = await verifyRoomAvailability(roomId, checkIn, checkOut);
+
+  if (!isVacant) {
+    return res.status(409).json({ error: 'Room unavailable for selected dates' });
+  }
+
+  const reservation = await Booking.create({ roomId, guestId, checkIn, checkOut });
+  return res.status(201).json({ success: true, reservation });
+};`,
+    },
   ];
 
-  const filteredProjects = selectedFilter === 'All' 
-    ? projects 
-    : projects.filter(p => p.category === selectedFilter);
-
-  const handleImageChange = (projectId: number, direction: 'prev' | 'next') => {
-    const project = projects.find(p => p.id === projectId);
-    if (!project || !project.images) return;
-
-    const currentIndex = currentImageIndex[projectId] || 0;
-    const totalImages = project.images.length;
-
-    if (direction === 'next') {
-      setCurrentImageIndex({
-        ...currentImageIndex,
-        [projectId]: (currentIndex + 1) % totalImages
-      });
-    } else {
-      setCurrentImageIndex({
-        ...currentImageIndex,
-        [projectId]: currentIndex === 0 ? totalImages - 1 : currentIndex - 1
-      });
-    }
-  };
-
-  const handleLightboxImageChange = (direction: 'prev' | 'next') => {
-    if (activeLightboxProject === null) return;
-    const images = getProjectImages(activeLightboxProject);
-    if (images.length <= 1) return;
-
-    if (direction === 'next') {
-      setActiveLightboxImageIndex((prev) => (prev + 1) % images.length);
-    } else {
-      setActiveLightboxImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    }
-  };
-
-  useEffect(() => {
-    if (activeLightboxProject === null) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        handleLightboxImageChange('next');
-      } else if (e.key === 'ArrowLeft') {
-        handleLightboxImageChange('prev');
-      } else if (e.key === 'Escape') {
-        setActiveLightboxProject(null);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [activeLightboxProject, activeLightboxImageIndex]);
-
   const categories = ['All', 'Real-Time', 'ERP / CRM', 'AI / LLM', 'Full-Stack'];
+
+  const filteredProjects = selectedFilter === 'All'
+    ? projects
+    : projects.filter((p) => p.category === selectedFilter);
+
+  const getActiveTab = (projectId: number): 'highlights' | 'architecture' | 'code' => {
+    const tab = activeTabs[projectId];
+    return tab === 'code' ? 'code' : 'highlights';
+  };
+
+  const handleTabChange = (projectId: number, tab: 'highlights' | 'architecture' | 'code') => {
+    setActiveTabs((prev) => ({
+      ...prev,
+      [projectId]: tab,
+    }));
+  };
 
   return (
     <section id="projects" className="projects">
@@ -150,8 +332,7 @@ const Projects: React.FC = () => {
 
       <div className="projects-list">
         {(showAll ? filteredProjects : filteredProjects.slice(0, INITIAL_COUNT)).map((project) => {
-          const currentIndex = project.images ? (currentImageIndex[project.id] || 0) : 0;
-          const displayImage = project.image || (project.images ? project.images[currentIndex] : null);
+          const currentTab = getActiveTab(project.id);
 
           return (
             <div key={project.id} className="project-item">
@@ -210,128 +391,114 @@ const Projects: React.FC = () => {
                       </svg>
                     </a>
                   )}
-                  
+
                   {/* Ask Liri Button */}
                   <button
                     className="ask-liri-project-btn"
                     onClick={() => triggerLiriForProject(project.title)}
                     title={`Ask Liri AI about ${project.title}`}
                   >
-                    🤖 Ask Liri about this
+                    <img src="/liri-logo2.png" alt="Liri logo" className="project-liri-logo-icon" />
+                    Ask Liri about this
                   </button>
                 </div>
               </div>
+
+              {/* Developer Sandbox Frame replacing screenshot images */}
               <div className="project-image-wrapper">
-                <div className={`project-image ${displayImage ? 'has-image' : ''}`}>
-                  {displayImage ? (
-                    <div className="monitor-frame">
-                      <div className="monitor-screen">
-                        <div className="browser-window">
-                          <div className="browser-header">
-                            <div className="browser-dots">
-                              <span className="browser-dot dot-red"></span>
-                              <span className="browser-dot dot-yellow"></span>
-                              <span className="browser-dot dot-green"></span>
+                <div className="sandbox-window">
+                  {/* macOS Browser / Editor Bar */}
+                  <div className="sandbox-bar">
+                    <div className="sandbox-dots">
+                      <span className="sandbox-dot dot-red"></span>
+                      <span className="sandbox-dot dot-yellow"></span>
+                      <span className="sandbox-dot dot-green"></span>
+                    </div>
+                    <div className="sandbox-filename">
+                      <span className="file-icon">📄</span> {project.filename}
+                    </div>
+                    <div className="sandbox-tabs">
+                      <button
+                        className={`sandbox-tab-btn ${currentTab === 'highlights' ? 'active' : ''}`}
+                        onClick={() => handleTabChange(project.id, 'highlights')}
+                      >
+                        ⚡ Highlights
+                      </button>
+                      {/* Architecture Tab commented out for now per user request */}
+                      {/* <button
+                        className={`sandbox-tab-btn ${currentTab === 'architecture' ? 'active' : ''}`}
+                        onClick={() => handleTabChange(project.id, 'architecture')}
+                      >
+                        🏗️ Arch
+                      </button> */}
+                      <button
+                        className={`sandbox-tab-btn ${currentTab === 'code' ? 'active' : ''}`}
+                        onClick={() => handleTabChange(project.id, 'code')}
+                      >
+                        💻 Code
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Sandbox Body Content */}
+                  <div className="sandbox-body">
+                    {currentTab === 'highlights' && (
+                      <div className="sandbox-highlights-grid">
+                        {project.highlights.map((h, i) => (
+                          <div key={i} className="sandbox-highlight-card">
+                            <div className="highlight-header">
+                              <span className="highlight-icon">{h.icon}</span>
+                              <span className="highlight-title">{h.title}</span>
                             </div>
-                            <div className="browser-url">
-                              {project.title === 'JewelryPro'
-                                ? 'JewelryPro'
-                                : project.title === 'Liri - Ai Assistant'
-                                  ? 'Liri Ai Assistant'
-                                  : 'Guest Room App'}
-                            </div>
+                            <p className="highlight-desc">{h.desc}</p>
                           </div>
-                          <div className="browser-content">
-                            {project.images && project.images.length > 1 ? (
-                              <>
-                                <div className="image-carousel">
-                                  <img
-                                    loading="lazy"
-                                    src={displayImage}
-                                    alt={`${project.title} - Screenshot ${currentIndex + 1}`}
-                                    className="project-screenshot clickable-image"
-                                    onClick={() => {
-                                      setActiveLightboxProject(project.id);
-                                      setActiveLightboxImageIndex(currentIndex);
-                                    }}
-                                    onError={() => {
-                                      setImageErrors({
-                                        ...imageErrors,
-                                        [displayImage]: true
-                                      });
-                                    }}
-                                    onLoad={() => {
-                                      setImageErrors({
-                                        ...imageErrors,
-                                        [displayImage]: false
-                                      });
-                                    }}
-                                  />
-                                  <button
-                                    className="carousel-btn carousel-prev"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleImageChange(project.id, 'prev');
-                                    }}
-                                    aria-label="Previous image"
-                                  >
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M10 12l-4-4 4-4" />
-                                    </svg>
-                                  </button>
-                                  <button
-                                    className="carousel-btn carousel-next"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleImageChange(project.id, 'next');
-                                    }}
-                                    aria-label="Next image"
-                                  >
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M6 12l4-4-4-4" />
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div className="carousel-indicators">
-                                  {project.images.map((_, idx) => (
-                                    <button
-                                      key={idx}
-                                      className={`carousel-indicator ${idx === currentIndex ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setCurrentImageIndex({
-                                          ...currentImageIndex,
-                                          [project.id]: idx
-                                        });
-                                      }}
-                                      aria-label={`Go to image ${idx + 1}`}
-                                    />
-                                  ))}
-                                </div>
-                              </>
-                            ) : (
-                              <img
-                                src={displayImage}
-                                alt={project.title}
-                                className="project-screenshot clickable-image"
-                                onClick={() => {
-                                  if (displayImage) {
-                                    setActiveLightboxProject(project.id);
-                                    setActiveLightboxImageIndex(0);
-                                  }
-                                }}
-                              />
-                            )}
-                          </div>
-                        </div>
+                        ))}
                       </div>
-                      <div className="monitor-base"></div>
-                    </div>
-                  ) : (
-                    <div className="project-image-placeholder">
-                      <span>💻</span>
-                    </div>
-                  )}
+                    )}
+
+                    {/* Architecture diagram section commented out for now per user request */}
+                    {/* {currentTab === 'architecture' && (
+                      <div className="process-diagram-wrapper">
+                        {project.archGroups.map((group, groupIdx) => (
+                          <React.Fragment key={groupIdx}>
+                            <div className={`process-subsystem-box color-${group.color}`}>
+                              <div className="subsystem-header-title">{group.name}</div>
+                              <div className="subsystem-nodes-column">
+                                {group.nodes.map((node, nodeIdx) => (
+                                  <div key={nodeIdx} className="process-node-card">
+                                    <span className="process-node-icon">{node.icon}</span>
+                                    <div className="process-node-meta">
+                                      <div className="process-node-label">{node.label}</div>
+                                      <div className="process-node-sub">{node.sub}</div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {groupIdx < project.archGroups.length - 1 && (
+                              <div className="process-flow-connector">
+                                <div className="connector-line-wrapper">
+                                  <span className="connector-label-pill">
+                                    {project.archConnections[groupIdx]?.label || 'Data Flow'}
+                                  </span>
+                                  <div className="connector-arrow">➔</div>
+                                </div>
+                              </div>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )} */}
+
+                    {currentTab === 'code' && (
+                      <div className="sandbox-code-container">
+                        <pre className="sandbox-code-block">
+                          <code>{project.codeSnippet}</code>
+                        </pre>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -343,7 +510,7 @@ const Projects: React.FC = () => {
         <div className="projects-show-more">
           <button
             className="projects-show-more-btn"
-            onClick={() => setShowAll(prev => !prev)}
+            onClick={() => setShowAll((prev) => !prev)}
             aria-expanded={showAll}
           >
             {showAll ? (
@@ -364,77 +531,6 @@ const Projects: React.FC = () => {
           </button>
         </div>
       )}
-
-      {activeLightboxProject !== null && (() => {
-        const project = projects.find(p => p.id === activeLightboxProject);
-        if (!project) return null;
-        const images = getProjectImages(activeLightboxProject);
-        const currentImg = images[activeLightboxImageIndex];
-
-        return (
-          <div
-            className="lightbox-overlay"
-            onClick={() => setActiveLightboxProject(null)}
-          >
-            <button
-              className="lightbox-close"
-              onClick={() => setActiveLightboxProject(null)}
-              aria-label="Close lightbox"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-
-            {images.length > 1 && (
-              <button
-                className="lightbox-btn lightbox-prev"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLightboxImageChange('prev');
-                }}
-                aria-label="Previous image"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
-            )}
-
-            <div className="lightbox-image-container" onClick={(e) => e.stopPropagation()}>
-              <img
-                src={currentImg}
-                alt={`${project.title} - Zoomed View`}
-                className="lightbox-img"
-              />
-              <div className="lightbox-footer">
-                <span className="lightbox-title">{project.title}</span>
-                {images.length > 1 && (
-                  <span className="lightbox-counter">
-                    {activeLightboxImageIndex + 1} / {images.length}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {images.length > 1 && (
-              <button
-                className="lightbox-btn lightbox-next"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLightboxImageChange('next');
-                }}
-                aria-label="Next image"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
-            )}
-          </div>
-        );
-      })()}
     </section>
   );
 };
