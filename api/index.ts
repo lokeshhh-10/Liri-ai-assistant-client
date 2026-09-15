@@ -69,14 +69,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       // Collect server-side keys
       const keys = [
-        process.env.GEMINI_API_KEY1,
-        process.env.GEMINI_API_KEY2,
+        // process.env.GEMINI_API_KEY1,
+        // process.env.GEMINI_API_KEY2,
         process.env.GEMINI_API_KEY3,
         process.env.GEMINI_API_KEY4,
         process.env.GEMINI_API_KEY5,
         process.env.GEMINI_API_KEY6,
-        process.env.VITE_GEMINI_API_KEY1,
-        process.env.VITE_GEMINI_API_KEY2,
+        // process.env.VITE_GEMINI_API_KEY1,
+        // process.env.VITE_GEMINI_API_KEY2,
         process.env.VITE_GEMINI_API_KEY3,
         process.env.VITE_GEMINI_API_KEY4,
         process.env.VITE_GEMINI_API_KEY5,
@@ -110,13 +110,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
             if (!geminiRes.ok) {
               const errBody = await geminiRes.text();
+              console.error(`Gemini request failed (${geminiRes.status}) with key: ${apiKey}`);
               if (
                 geminiRes.status === 429 ||
                 geminiRes.status === 503 ||
                 errBody.includes('RESOURCE_EXHAUSTED') ||
                 errBody.includes('UNAVAILABLE')
               ) {
-                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}), failing over...`);
+                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}) [Key: ${apiKey}], failing over...`);
                 continue;
               }
               return error(res, geminiRes.status, `Gemini API error: ${errBody}`);
@@ -154,13 +155,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             const data = await geminiRes.json();
 
             if (!geminiRes.ok) {
+              console.error(`Gemini request failed (${geminiRes.status}) with key: ${apiKey}`);
               if (
                 geminiRes.status === 429 ||
                 geminiRes.status === 503 ||
                 data?.error?.status === 'RESOURCE_EXHAUSTED' ||
                 data?.error?.status === 'UNAVAILABLE'
               ) {
-                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}), failing over...`);
+                console.warn(`Gemini server key attempt ${attempts} failed (${geminiRes.status}) [Key: ${apiKey}], failing over...`);
                 continue;
               }
               return error(res, geminiRes.status, data?.error?.message || 'Gemini API error');
@@ -171,7 +173,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           }
         } catch (err: any) {
           lastErr = err;
-          console.warn(`Gemini attempt ${attempts} encountered error:`, err?.message);
+          console.error(`Gemini attempt ${attempts} encountered error with key [Key: ${apiKey}]:`, err?.message);
         }
       }
 
